@@ -82,6 +82,8 @@ The official Repo for lel is [invist/lel:v0.0.1](https://hub.docker.com/r/invist
 ./lel -docu <docupath> -editor /usr/bin/code -addr 127.0.0.1:8888
 ```
 
+![graph](./docs/pic_graph.png)
+
 ## Metatags
 
 Metatags are the explosion parts of LEL:
