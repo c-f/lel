@@ -1,0 +1,20 @@
+{
+  "AppName": "LeL",
+  "PackageVersion": "v0.0.1",
+  "ConfigVersion": "0.9",
+  "Resources": {
+    "Include": "README.md,static/dist/app-prod.js,static/dist/icons/*,static/dist/vendor/*,_lel-*",
+    "Exclude": "*.go"
+  },
+  "go-fmt": {
+    "dir": "./..."
+  },
+  "ArtifactsDest": "./pkg/{{.AppName}}",
+  "Tasks": ["xc", "archive"],
+  "BuildConstraints": "linux,amd64 windows,amd64,darwin",
+  "TaskSettings": {
+    "xc": {
+      "GOARM": "7"
+    }
+  }
+}

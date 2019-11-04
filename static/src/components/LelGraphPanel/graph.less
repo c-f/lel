@@ -1,0 +1,88 @@
+.editor {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  background: #fff;
+}
+
+.editorHd {
+  padding: 8px;
+  border: 1px solid #e6e9ed;
+}
+
+.editorBd {
+  flex: 1;
+  height: 1000px;
+}
+
+.editorSidebar,
+.editorContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.editorSidebar {
+  background: #fafafa;
+
+  &:first-child {
+    border-right: 1px solid #e6e9ed;
+  }
+
+  &:last-child {
+    border-left: 1px solid #e6e9ed;
+  }
+}
+
+.flow,
+.mind,
+.koni {
+  flex: 1;
+  /*  https://github.com/philipwalton/flexbugs/issues/197#issuecomment-378908438 */
+  height: 0;
+}
+
+/*todo verify*/
+.ant-tree.ant-tree-show-line.hide-file-icon li span.ant-tree-switcher-noop {
+  background: transparent;
+}
+
+.ant-tree.ant-tree-show-line.hide-file-icon li:before {
+  content: " ";
+  width: 1px;
+  border-left: 1px solid #d9d9d9;
+  height: 100%;
+  position: absolute;
+  left: 12px;
+  top: 0;
+  margin: 0;
+}
+
+.ant-tree.ant-tree-show-line.hide-file-icon li:first-child:before {
+  top: 6px;
+  height: calc(100% - 6px);
+}
+
+.ant-tree.ant-tree-show-line.hide-file-icon li:last-child:before {
+  height: 16px;
+}
+
+.ant-tree.ant-tree-show-line.hide-file-icon li:first-child:last-child:before {
+  height: 10px;
+}
+
+.ant-tree.ant-tree-show-line.hide-file-icon li .ant-tree-switcher-noop > i {
+  visibility: hidden;
+}
+
+.ant-tree.ant-tree-show-line.hide-file-icon li .ant-tree-switcher-noop:after {
+  content: " ";
+  height: 1px;
+  border-bottom: 1px solid #d9d9d9;
+  width: 10px;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  margin: 0;
+}

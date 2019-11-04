@@ -1,0 +1,28 @@
+# xhost +local:
+# socat TCP-LISTEN:80,fork TCP:www.domain.org:80
+# UID=${UID} docker-compose up -d 
+version: '3'
+services:
+
+  # Seafile client for synchronizing
+  client:
+    build: 
+      context: .
+      dockerfile: client.Dockerfile
+      args:
+       - USER_ID=${UID:1000}
+    environment:
+      - DISPLAY=unix$DISPLAY
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /etc/machine-id:/etc/machine-id
+      - ./seafile-data:/data
+      - seacloud-conf:/seafile-client
+    networks:
+     docu:
+
+volumes:
+  seacloud-conf: 
+networks:
+ docu:
+  external: {name: docu_net}

@@ -1,0 +1,17 @@
+version: '3'
+services:
+  server:
+    # tested with 6.3.3
+    image: seafileltd/seafile:latest
+    environment:
+      - SEAFILE_SERVER_HOSTNAME={{ seafile_hostname }}
+      - SEAFILE_ADMIN_EMAIL={{ seafile_admin}}
+      - SEAFILE_ADMIN_PASSWORD={{ seafile_admin_pw }}
+    volumes:
+      - seafile-data:/shared
+    ports:
+      #           leeel
+      - 127.0.0.1:13331:80
+    
+volumes:
+  seafile-data:

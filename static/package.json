@@ -1,0 +1,59 @@
+{
+  "name": "LEL",
+  "version": "v0.0.1",
+  "description": "LEL - Lower Exploision Limit - is is a visualization and documentation helper for your notes. Visualize your notes on different layers and explode your structure.",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode production --config webpack.config.js",
+    "watch": "webpack --mode development --config webpack.config.js --watch",
+    "serve": "webpack-dev-server --mode development --config webpack.dev.config.js  --hot"
+  },
+  "homepage": "https://editor.l3l.lol",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/c-f/lel.git"
+  },
+  "keywords": [],
+  "author": "c-f <@invist> https://github.com/c-f",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.0",
+    "@babel/plugin-transform-runtime": "^7.6.2",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/runtime": "^7.4.5",
+    "antd": "^3.20.0",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-import": "^1.12.0",
+    "codemirror": "^5.49.0",
+    "css-loader": "^2.1.1",
+    "dagre": "^0.8.4",
+    "gg-editor": "^2.0.4",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
+    "moment": "^2.24.0",
+    "postcss-loader": "^3.0.0",
+    "postcss-preset-env": "^6.5.0",
+    "prop-types": "^15.7.2",
+    "react-codemirror2": "^6.0.0",
+    "react-image-gallery": "^0.9.1",
+    "react-moment": "^0.9.6",
+    "react-player": "^1.13.0",
+    "recordrtc": "^5.5.8",
+    "style-loader": "^0.23.1",
+    "svg-inline-loader": "^0.8.0",
+    "ts-ebml": "^2.0.2",
+    "webpack": "^4.35.2",
+    "webpack-cli": "^3.3.5",
+    "webpack-dev-server": "^3.7.2"
+  },
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-markdown": "^4.1.0"
+  }
+}

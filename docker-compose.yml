@@ -1,0 +1,18 @@
+# Builder
+version: "3"
+services:
+  web:
+   image: invist/lel:v0.0.1
+   volumes:
+    - project:/project
+    #- ./project:/project
+   ports:
+    - 127.0.0.1:8888:8888
+   command: >
+    ./lel
+    -docu /project
+    -appDir /app
+    -addr 0.0.0.0:8888
+
+volumes:
+ project:

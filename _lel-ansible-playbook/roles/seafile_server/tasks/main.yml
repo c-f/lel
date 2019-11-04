@@ -1,0 +1,192 @@
+# Ansible File for setup seafile (https://seafile.com)
+# docker based of course :)
+- name: Update APT package cache
+  apt: update_cache=yes
+  become: true
+
+- name: Upgrade APT to the latest packages
+  apt: upgrade=safe
+  become: true
+
+# ---[INSTALL]---
+# ---------------
+- name: Installing dependencies
+  apt: pkg="{{ item }}" state=installed
+  with_items:
+    - docker.io
+    - git
+    - htop
+    - tmux
+    - jq
+  become: true 
+
+- name: Install Docker Compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+    dest: "/usr/local/bin/docker-compose"
+    force: True
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  become: true
+
+# SET ENVS
+- name: generate Facts
+  set_fact:
+    seafile_admin_pw: "{{ admin_pw }}"
+    seafile_admin: "{{ admin_user }}"
+    seafile_hostname: "seafile.local:13331"
+    seafile_dir: "seafile"
+    e2e_pw: "{{ enc_pw }}"
+
+# Save Everything to file:
+- name: Write Output to File
+  local_action:
+    module: lineinfile
+    dest: "{{ release_file }}"
+    line: "{{ item }}"
+    create: yes
+  with_items:
+    - "---------------------"
+    - "End2end: {{ e2e_pw }}"
+    - "Admin_PW: {{ seafile_admin_pw }}"
+
+- name: Finished
+  debug:
+    msg: " Password {{ seafile_admin }}:{{seafile_admin_pw}}  > "
+
+# ---[UPLOAD]---
+# --------------
+- name: Create Path
+  file: path="{{seafile_dir}}" state="directory" owner="{{ansible_env.USER}}" group="{{ansible_env.USER}}" mode=0775
+
+- name: Upload client configuration for later download
+  copy: src="{{ item.src}}" dest="{{ item.dest }}"  owner="{{ansible_env.USER}}" group="{{ansible_env.USER}}"
+  with_items:
+    - {
+        src: "docker-compose.client.yml",
+        dest: "{{seafile_dir}}/docker-compose.client.yml",
+      }
+    - { src: "client.Dockerfile", dest: "{{seafile_dir}}/client.Dockerfile" }
+    - { src: "setup.sh", dest: "{{seafile_dir}}/setup.sh" }
+    - { src: "README.md", dest: "{{seafile_dir}}/README.md" }
+
+- name: Upload docker-compose.yml for server
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{seafile_dir}}/{{item}}"
+    owner: "{{ansible_env.USER}}"
+    group: "{{ansible_env.USER}}"
+    mode: 0644
+  with_items:
+    - docker-compose.yml
+
+#
+
+# ---[ACTION]---
+# --------------
+- name: Start server (serving 127.0.0.1:13331)
+  command: "docker-compose up -d server"
+  args:
+    chdir: "{{seafile_dir}}"
+  become: true
+
+- name: Wait for Seafile server
+  wait_for:
+    host: 127.0.0.1
+    port: 13331
+    delay: 60
+
+# --[Get Token]--
+- name: get api token from seafile
+  uri:
+    url: "{{LOCAL_URL}}/api2/auth-token/"
+    method: POST
+    body:
+      username: "{{seafile_admin}}"
+      password: "{{seafile_admin_pw}}"
+    status_code: 200
+    body_format: form-urlencoded
+  register: api_token_raw
+
+- name: parse response
+  set_fact:
+    api_token: "{{ api_token_raw.json.token }}"
+
+# --[Read All Operators from local]--
+- name: Read Usernames from file
+  include_vars:
+    file: misc_docu_srv._usernames.yml
+    name: usernames
+
+- name: Generate Passwords for
+  debug:
+    msg: "{{ lookup('password', '/dev/null chars=ascii_letters,digits,hexdigits,punctuation') }}"
+  register: userpass
+  with_items: "{{ usernames.operators | default('operator', true) }}"
+
+# Save Everything to file:
+- name: Write Output to File
+  local_action:
+    module: lineinfile
+    dest: "{{ release_file }}"
+    line: "Operator: {{ item.item }}:{{ item.msg }}"
+    create: yes
+  become: false
+  # todo multiple lists (e.g. e2e_pw, admin_pw)
+  # | zip(["Endtoend: " + e2e_pw , "Admin: "+ admin_pw]) | list
+  with_items: "{{ userpass.results }}"
+
+#  --[Add users]--
+- name: Add Users
+  uri:
+    url: "{{LOCAL_URL}}/api2/accounts/{{item.item}}/"
+    method: PUT
+    status_code: 201
+    body:
+      password: "{{item.msg}}"
+    body_format: form-urlencoded
+    headers:
+      Authorization: "Token {{api_token}}"
+  with_items: "{{ userpass.results }}"
+
+# --[Create and Share Repo]--
+- name: Create E2E Repo
+  uri:
+    url: "{{LOCAL_URL}}/api2/repos/"
+    method: POST
+    body:
+      passwd: "{{ e2e_pw }}"
+      name: "docu"
+      desc: "documenting"
+    body_format: form-urlencoded
+    headers:
+      Authorization: "Token {{api_token}}"
+  register: repoid
+
+- name: Debug show repoid
+  debug:
+    msg: "{{repoid.json.repo_id}} "
+
+- name: Share resources with Operators
+  uri:
+    url: "{{LOCAL_URL}}/api2/repos/{{repoid.json.repo_id}}/dir/shared_items/?p=/"
+    method: PUT
+    status_code: 200
+    body:
+      repo_id: "{{repoid.json.repo_id}}"
+      share_type: user
+      permission: rw
+      username: "{{ item.item }}"
+    body_format: form-urlencoded
+    headers:
+      Authorization: "Token {{ api_token }}"
+  with_items: "{{ userpass.results }}"
+
+# --[FINISHED]--
+# --------------
+- name: Finished
+  become: false
+  local_action:
+    module: debug
+      msg=" Start Syncing !!!!  > "

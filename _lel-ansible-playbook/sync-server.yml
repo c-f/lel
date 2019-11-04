@@ -1,0 +1,14 @@
+# --[Setup for the seafile sync server]--
+- name: Setup Docu
+  connection: ssh
+  hosts: dev
+  vars:
+    docker_compose_version: "1.18.0"
+    admin_user: "lel-seafile-admin"
+    admin_pw: "{{ lookup('password', '/dev/null chars=ascii_letters,digits,hexdigits') }}"
+    enc_pw: "{{ lookup('password', '/dev/null chars=ascii_letters,digits,hexdigits,punctuation') }}"
+    release_file: "./seafile.release.txt"
+    LOCAL_URL: "http://127.0.0.1:13331"
+  gather_facts: True
+  roles:
+    - seafile_server

@@ -1,0 +1,9 @@
+all:
+ children:
+  dev:
+   hosts:
+    <ip>:
+     # depending on the provider
+     ansible_connection: "paramiko"
+     ansible_python_interpreter: "/usr/bin/python3"
+     ansible_ssh_user: "lel"

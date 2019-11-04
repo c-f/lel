@@ -1,0 +1,11 @@
+# Builder
+version: "3.4"
+services:
+  builder:
+   build:
+    context: .
+    dockerfile: Dockerfile
+    target: goxc
+   volumes:
+    - ./pkg:/go/src/github.com/c-f/lel/pkg
+   command: goxc
