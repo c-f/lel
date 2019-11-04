@@ -1,5 +1,6 @@
 static/node_modules
 static/dist/*.js
+static/dist/app-prod.js.map
 crts/
 pkg/
 _lel-ansible-playbook/inv.yml
