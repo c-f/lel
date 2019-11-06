@@ -58,7 +58,7 @@ func main() {
 		ImageDir:  filepath.Join(*lelDir, "images"),
 		VideoDir:  filepath.Join(*lelDir, "videos"),
 		MisatoDir: filepath.Join(*lelDir, "misato"),
-		GraphDir:  filepath.Join(*lelDir, ".tmp"),
+		GraphDir:  filepath.Join(*lelDir, "graphs"),
 	}
 
 	// get config if provided

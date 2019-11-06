@@ -52,7 +52,7 @@ func (p *ProjectConfig) Prepare() (err error) {
 		}
 	}
 	if p.GraphDir != "" {
-		if p.GraphDir, err = utils.GetAbsPath(p.MisatoDir, ""); err != nil {
+		if p.GraphDir, err = utils.GetAbsPath(p.GraphDir, ""); err != nil {
 			return
 		}
 	}

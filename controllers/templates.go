@@ -153,6 +153,7 @@ const appTemplate = `{{ define "base" }}
         base: base + "/",
         graph: {
           get: base + "/api/feat/graph/get"
+          upload: base + "/api/feat/upload/graph",
         },
         image: {
           upload: base + "/api/feat/upload/image",
@@ -176,6 +177,7 @@ const appTemplate = `{{ define "base" }}
           folder: base + "/api/core/folder",
           video: base + "/api/core/videos",
           images: base + "/api/core/images",
+          graphs: base + "/api/core/graphs",
 
           // within
           tags: base + "/api/core/tags",

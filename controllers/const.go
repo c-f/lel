@@ -26,6 +26,7 @@ var (
 			"Milestone":  "/core/milestones",
 			"Videos":     "/core/videos",
 			"Images":     "/core/images",
+			"Graphs": 	  "/core/graphs",
 
 			// search
 			"Search":  "/core/search",
@@ -33,9 +34,11 @@ var (
 
 			// features
 			"GraphView":      "/feat/graph/get",
+
 			"ImageUpload":    "/feat/upload/image",
 			"VideoUpload":    "/feat/upload/video",
 			"MarkdownUpload": "/feat/upload/md",
+			"GraphUpload":    "/feat/upload/graph",
 
 			"Misato":       "/feat/misato",
 			"MisatoSearch": "/feat/misato/search",

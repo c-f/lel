@@ -16,6 +16,7 @@ import (
 
 var (
 	ErrWrongFormat       = errors.New("Wrong Format ")
+	ErrWrongExtension = errors.New("Wrong format")
 	ErrFileAlreadyExists = errors.New("File already exist")
 )
 
@@ -55,19 +56,25 @@ func ConvertToVideoInfo(raw string) (*VideoInfo, error) {
 type Media struct {
 	ImageDir string
 	VideoDir string
+	GraphDir string
 }
 
 // New creates a new Media for uploading and serving images from a specific folder
-func New(imagePath, videoPath string) (im *Media, err error) {
+func New(imagePath, videoPath, graphDir string) (im *Media, err error) {
 	if err = os.MkdirAll(imagePath, 0755); err != nil {
 		return
 	}
 	if err = os.MkdirAll(videoPath, 0755); err != nil {
 		return
 	}
+	if err = os.MkdirAll(graphDir, 0755); err != nil {
+		return
+	}
+
 	im = &Media{
 		ImageDir: imagePath,
 		VideoDir: videoPath,
+		GraphDir: graphDir,
 	}
 	return im, err
 }
@@ -113,6 +120,40 @@ func (im *Media) ListImages() []string {
 	files = utils.TrimParts(files, im.ImageDir)
 
 	return files
+}
+
+// ListGraphs returns a list of all saved graphs
+func (im *Media) ListGraphs() []string{
+	files := utils.FindExtension(im.GraphDir, ".graph.json")
+	files = utils.TrimParts(files, im.GraphDir)
+
+	return files
+}
+
+// Upload Graph
+func (im *Media)Graph(r *http.Request)(fileName string, err error){
+	name := r.URL.Query().Get("name")
+
+	testPath, err := utils.GetAbsPath(im.GraphDir, name)
+	if err != nil {
+		return "", err
+	}
+	if ok := strings.HasSuffix(testPath, ".graph.json"); !ok {
+		return "", ErrWrongExtension
+	}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil{
+		return "", err
+	}
+	if len(body) <= 0 {
+		return "", errors.New("empty")
+	}
+	err = SaveBts(body, testPath)
+	if err != nil {
+		return "", err 
+	}
+
+	return testPath, nil
 }
 
 // UploadVideo

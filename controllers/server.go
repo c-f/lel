@@ -68,12 +68,15 @@ func NewServer(sConf *config.ServerConfig, pConf *config.ProjectConfig) (s *Serv
 	if pConf.GraphDir != "" {
 		log.Printf("[+] Created Graph API \n")
 		api.AddGraphHandler(pConf.GraphDir)
+
+		staticGraph := NewSuffixHandler(pConf.GraphDir, ".graph.json")
+		router.PathPrefix("/graphs/").Handler(staticGraph("/graphs/"))
 	}
 	if pConf.MisatoDir != "" {
 		log.Printf("[+] Created Misato API \n")
 		api.AddMisatoHandler(pConf.MisatoDir)
 	}
-	if pConf.ImageDir != "" && pConf.VideoDir != "" {
+	if pConf.ImageDir != "" && pConf.VideoDir != ""{
 
 		staticImage := NewSuffixHandler(pConf.ImageDir, ".png")
 		staticVideo := NewSuffixHandler(pConf.VideoDir, ".webm")
@@ -84,7 +87,7 @@ func NewServer(sConf *config.ServerConfig, pConf *config.ProjectConfig) (s *Serv
 		// Enable Upload
 		if s.c.EnableUpload {
 			log.Printf("[+] Created Upload API \n")
-			api.AddUploadHandler(pConf.ImageDir, pConf.VideoDir)
+			api.AddUploadHandler(pConf.ImageDir, pConf.VideoDir, pConf.GraphDir)
 		}
 	}
 

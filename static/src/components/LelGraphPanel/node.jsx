@@ -1,16 +1,6 @@
 import React from "react";
 import { RegisterNode } from "gg-editor";
 
-import svg_database_cube from "./shapes/database_cube.svg";
-import svg_generic_node from "./shapes/generic_node.svg";
-import svg_internet_cloud from "./shapes/internet_cloud.svg";
-import svg_sql_server from "./shapes/sql_server.svg";
-import svg_sub_site from "./shapes/sub_site.svg";
-import svg_user from "./shapes/user.svg";
-import svg_vista_terminal from "./shapes/vista_terminal.svg";
-import svg_windows_server_2 from "./shapes/windows_server_2.svg";
-import svg_windows_server from "./shapes/windows_server.svg";
-
 // generateConfig returns a valid config and renders the image if no custom icon is found
 let generateConfig = shapeConfig => {
   return {

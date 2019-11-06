@@ -118,8 +118,8 @@ func (api *APIHandler) AddMisatoHandler(misatoPath string) error {
 }
 
 // AddImageHandler returns an image filehandler
-func (api *APIHandler) AddUploadHandler(imagePath, videoPath string) error {
-	handler, err := media.New(imagePath, videoPath)
+func (api *APIHandler) AddUploadHandler(imagePath, videoPath, graphPath string) error {
+	handler, err := media.New(imagePath, videoPath, graphPath)
 	api.mediaHandler = handler
 	return err
 
@@ -182,11 +182,14 @@ func (api *APIHandler) registerRoutes() {
 
 	// Add Medias
 	if api.mediaHandler != nil {
+		router.HandleFunc(Routes.Get("MarkdownUpload"), api.requireAuth(api.MarkdownUpload))
 		router.HandleFunc(Routes.Get("ImageUpload"), api.requireAuth(api.ImageUpload))
 		router.HandleFunc(Routes.Get("VideoUpload"), api.requireAuth(api.VideoUpload))
+		router.HandleFunc(Routes.Get("GraphUpload"), api.requireAuth(api.GraphUpload))
+		router.HandleFunc(Routes.Get("Graphs"), api.requireAuth(api.Graphs))
 		router.HandleFunc(Routes.Get("Videos"), api.requireAuth(api.Videos))
 		router.HandleFunc(Routes.Get("Images"), api.requireAuth(api.Images))
-		router.HandleFunc(Routes.Get("MarkdownUpload"), api.requireAuth(api.MarkdownUpload))
+		
 	}
 
 	// Add Loginformation
@@ -246,6 +249,18 @@ func (api *APIHandler) Images(w http.ResponseWriter, r *http.Request) {
 		JSONResponse(w, infos, http.StatusOK)
 	}
 }
+
+// Graphs return a list of video names based on requested criteria
+// GET structue=fast,start=1572445498,stop=1572445498
+func (api *APIHandler) Graphs(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+
+		infos := api.mediaHandler.ListGraphs()
+		JSONResponse(w, infos, http.StatusOK)
+		return
+	}
+}
+
 
 // GetMilestone returns all the milestones or create a new one
 // GET structure=fast
@@ -361,6 +376,25 @@ func (api *APIHandler) VideoUpload(w http.ResponseWriter, r *http.Request) {
 	}
 	JSONResponse(w, r.Method, http.StatusMethodNotAllowed)
 }
+
+// GraphUpload handles video uploaded as multi form
+func (api *APIHandler) GraphUpload(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" { // maybe PUT
+		absPath, err := api.mediaHandler.Graph(r)
+		if err != nil {
+			JSONErrorResponse(w, err)
+			return
+		}
+
+		log.Printf("[%s] uploading", "graph:upload", absPath)
+		newFile := utils.TrimPart(api.mediaHandler.GraphDir, absPath)
+		JSONResponse(w, newFile, http.StatusOK)
+
+		return
+	}
+	JSONResponse(w, r.Method, http.StatusMethodNotAllowed)
+}
+
 
 // MarkdownUpload handels upload
 // TODO raceconditions !

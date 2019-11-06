@@ -3,6 +3,9 @@ package graph
 import (
 	"errors"
 	"log"
+
+	"strings"
+	"sort"
 )
 
 var (
@@ -138,7 +141,7 @@ func (g *MetaGraph) Export() Export {
 	// Add nodes
 	for origin, info := range g.nodes {
 		node := NewOriginNode(info)
-		nodes = append(nodes, node)
+		nodes = SortedInsertNodes(nodes, node)
 
 		for _, raw := range info.Relations {
 			var edge *Edge
@@ -156,7 +159,7 @@ func (g *MetaGraph) Export() Export {
 					unknown[subject] = origin
 
 					emptyNode := NewNode(subject)
-					nodes = append(nodes, emptyNode)
+					nodes = SortedInsertNodes(nodes, emptyNode)
 					subject = emptyNode.Id
 					continue
 				}
@@ -169,7 +172,7 @@ func (g *MetaGraph) Export() Export {
 					unknown[object] = origin
 
 					emptyNode := NewNode(object)
-					nodes = append(nodes, emptyNode)
+					nodes = SortedInsertNodes(nodes, emptyNode)
 					object = emptyNode.Id
 					continue
 				}
@@ -198,7 +201,7 @@ func (g *MetaGraph) Export() Export {
 			}
 
 			// append relation
-			edges = append(edges, edge)
+			edges = SortedInsertEdges(edges, edge)
 
 		}
 	}
@@ -230,7 +233,7 @@ func (g *MetaGraph) Export() Export {
 					unknown[subject] = origin
 
 					emptyNode := NewNode(subject)
-					nodes = append(nodes, emptyNode)
+					nodes = SortedInsertNodes(nodes, emptyNode)
 					subject = emptyNode.Id
 					continue
 				}
@@ -242,7 +245,7 @@ func (g *MetaGraph) Export() Export {
 					unknown[object] = origin
 
 					emptyNode := NewNode(object)
-					nodes = append(nodes, emptyNode)
+					nodes = SortedInsertNodes(nodes, emptyNode)
 					object = emptyNode.Id
 					continue
 				}
@@ -252,7 +255,7 @@ func (g *MetaGraph) Export() Export {
 			}
 
 			// append relation
-			edges = append(edges, edge)
+			edges = SortedInsertEdges(edges, edge)
 		}
 	}
 	return Export{
@@ -261,4 +264,23 @@ func (g *MetaGraph) Export() Export {
 		Unknown: unknown,
 		Errs:    errs,
 	}
+}
+
+
+// SortInsert creates a stable representation
+func SortedInsertNodes (nodes []*Node, newNode *Node) []*Node {
+	index := sort.Search(len(nodes), func(i int) bool { return strings.Compare(nodes[i].Id,newNode.Id ) > 0 })
+	nodes = append(nodes, &Node{})
+	copy(nodes[index+1:], nodes[index:])
+	nodes[index] = newNode
+	return nodes
+}
+
+// SortInsert creates a stable representation
+func SortedInsertEdges (edges []*Edge, edge *Edge) []*Edge {
+	index := sort.Search(len(edges), func(i int) bool { return strings.Compare(edges[i].Id,edge.Id ) > 0 })
+	edges = append(edges, &Edge{})
+	copy(edges[index+1:], edges[index:])
+	edges[index] = edge
+	return edges
 }
