@@ -15,6 +15,7 @@ var (
 			"Get":  "/notes/get",
 			"Meta": "/notes/meta",
 			"Open": "/notes/open",
+			"Remove": "/notes/remove",
 
 			// Core information
 			"Ok":         "/core/ok",

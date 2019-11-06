@@ -160,6 +160,7 @@ func (api *APIHandler) registerRoutes() {
 	router.HandleFunc(Routes.Get("Get"), api.requireAuth(api.GetMDFile))
 	router.HandleFunc(Routes.Get("Meta"), api.requireAuth(api.GetMDMeta))
 	router.HandleFunc(Routes.Get("Open"), api.requireAuth(api.OpenMDFile))
+	router.HandleFunc(Routes.Get("Remove"), api.requireAuth(api.RemoveMDFile))
 
 	// Information about the notes and files
 	router.HandleFunc(Routes.Get("Navigation"), api.requireAuth(api.GetNavArray))
@@ -698,6 +699,45 @@ func (api *APIHandler) GetMDFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	FileResponse(w, r, testPath)
+}
+
+// RemoveMDFile removes the file for the LeL editor, either because through rm or mv the file
+func (api *APIHandler)RemoveMDFile(w http.ResponseWriter, r *http.Request){
+	inputPath := r.URL.Query().Get("path")
+	shouldDeleted := r.URL.Query().Get("rm")
+
+	log.Printf("[%s] got %s", "notes:remove", inputPath)
+	testPath, err := utils.GetAbsPath(api.Notes, inputPath)
+	if err != nil {
+		JSONErrorResponse(w, ErrNotCleanPath)
+		return
+	}
+	if ok := strings.HasSuffix(testPath, ".md"); !ok {
+		JSONErrorResponse(w, ErrHasNoMDExtension)
+		return
+	}
+	if ok := utils.FileExist(testPath); !ok{
+		JSONErrorResponse(w, os.ErrNotExist)
+		return 
+	}
+	if shouldDeleted != "" {
+		log.Printf("[%s] got %s", "notes:delete", inputPath)
+		if err = os.Remove(testPath); err != nil{
+			JSONErrorResponse(w, err)
+			return 
+		}
+		JSONResponse(w, Success("deleted"), http.StatusOK)
+		return 
+	}else{
+		log.Printf("[%s] got %s", "notes:mv", inputPath)
+		if err = os.Rename(testPath,testPath + ".d"); err != nil{
+			JSONErrorResponse(w, err)
+			return 
+		}
+		JSONResponse(w, Success("moved"), http.StatusOK)
+		return 
+	}
+
 }
 
 // EditFile opens the File in an editor and create

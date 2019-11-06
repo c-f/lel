@@ -1,5 +1,5 @@
 // api contains every apiCall
-
+// hello
 var config = require("Config");
 
 export class API {
@@ -164,6 +164,24 @@ export class API {
   get = contentPath => {
     return fetch(
       config.notes.get + "?path=" + encodeURIComponent(contentPath),
+      {
+        headers: {
+          Authorization: `Token ${this.token}`
+        }
+      }
+    ).then(response => {
+      if (response.ok) {
+        return response.text();
+      } else {
+        throw new Error("Something went wrong ...");
+      }
+    });
+  };
+
+  // remove the note (only work with .md )
+  remove = contentPath => {
+    return fetch(
+      config.notes.remove + "?path=" + encodeURIComponent(contentPath),
       {
         headers: {
           Authorization: `Token ${this.token}`

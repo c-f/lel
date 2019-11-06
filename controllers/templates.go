@@ -165,6 +165,7 @@ const appTemplate = `{{ define "base" }}
         notes: {
           get: base + "/api/notes/get",
           open: base + "/api/notes/open",
+          remove: base + "/api/notes/remove",
           meta: base + "/api/notes/meta",
           upload: base + "/api/feat/upload/md"
         },

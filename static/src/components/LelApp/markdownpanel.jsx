@@ -94,6 +94,13 @@ class MarkdownPanel extends Component {
     return <img {...props} style={{ maxWidth: "100%", maxHeight: "500px" }} />;
   };
 
+  onDelete = e => {
+    e.preventDefault();
+    new API().remove(this.props.contentPath).then(res => {
+      message.success("File remove: " + this.props.contentPath, 2.5);
+    });
+  };
+
   // do something
   onSave = e => {
     e.preventDefault();
@@ -202,6 +209,11 @@ class MarkdownPanel extends Component {
                   type="question-circle"
                   onClick={this.props.onHelpClick}
                 ></Icon>,
+                <Button
+                  key="remove"
+                  icon="delete"
+                  onClick={this.onDelete}
+                ></Button>,
                 <Button key="change" icon="save" onClick={this.onSave}>
                   {this.state.changed <= 0 ? "*" : ""}
                 </Button>
