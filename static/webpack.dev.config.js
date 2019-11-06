@@ -9,7 +9,7 @@ master.output = {
 };
 
 master.devServer = {
-  //	watchContentBase: true,
+  watchContentBase: true,
   publicPath: "/static/",
   contentBase: path.join(__dirname, "dist"),
   proxy: {
