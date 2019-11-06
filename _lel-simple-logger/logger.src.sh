@@ -1,9 +1,9 @@
-# Author: Muhammed Taskiran (@0xMillyy)
+# Author: Muhammed Taskiran (@0xMillyy); mod by c-f
 
 # Usage 
-export MISATO_OPERATORKEY="lel"
-export MISATO_OPERATORAPI="https://127.0.0.1:8888"
-export MISATO_FILTER="${MISATO_FILTER:-.}"
+#export MISATO_OPERATORKEY="lel"
+#export MISATO_OPERATORAPI="https://127.0.0.1:8888"
+#export MISATO_FILTER="${MISATO_FILTER:-.}"
 
 ## --
 # FUNCTIONS 
