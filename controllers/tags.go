@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"strings"
+	"sort"
 )
 
 // TagStructure contains all tags in a treeStructure
@@ -66,7 +67,7 @@ func (s *TreeStructure) BuildAntGraph() []*AntNode {
 	for name, node := range s.Root.Children {
 		antNode := node.ConvertToAnt(name)
 
-		result = append(result, antNode)
+		result = SortedInsert(result, antNode)
 	}
 	return result
 }
@@ -83,6 +84,8 @@ type AntNode struct {
 	Other map[string]interface{} `json:"other,omitempty"`
 }
 
+
+
 // Tag defines a Tag
 type Node struct {
 	Content  []string         `json:"content"`
@@ -93,6 +96,7 @@ type Node struct {
 	// additionalData
 	Context map[string]interface{} `json:"ctx,omitempty"`
 }
+
 
 // ConvertToAnt converts the node to the format, where trees can be built
 func (n *Node) ConvertToAnt(name string) *AntNode {
@@ -112,12 +116,22 @@ func (n *Node) ConvertToAnt(name string) *AntNode {
 			core.Key = strings.Join(parts[:len(parts)-1], "/")
 		}
 	}
-
+	
 	for name, node := range n.Children {
-		core.Children = append(core.Children, node.ConvertToAnt(name))
+		core.Children = SortedInsert(core.Children, node.ConvertToAnt(name))
 	}
 	return core
 }
+
+// SortInsert creates a stable representation
+func SortedInsert (nodes []*AntNode, newNode *AntNode) []*AntNode {
+	index := sort.Search(len(nodes), func(i int) bool { return strings.Compare(nodes[i].Title,newNode.Title ) > 0 })
+	nodes = append(nodes, &AntNode{})
+	copy(nodes[index+1:], nodes[index:])
+	nodes[index] = newNode
+	return nodes
+}
+
 
 // todo directories have the wrong key - should only be test.
 
