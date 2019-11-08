@@ -29,7 +29,11 @@ export const loop = (data, searchValue, previous) => {
       if (searchValue.startsWith("tags:")) {
         if (item.other !== undefined && item.other.meta !== undefined) {
           tagFound = item.other.meta.names.some(i => {
-            return `tags:${i}`.indexOf(searchValue) >= 0;
+            return (
+              i.indexOf(
+                searchValue.substr("tags:".length, searchValue.length)
+              ) >= 0
+            );
           });
         }
       }

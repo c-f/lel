@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import TreeView from "./tree.jsx";
-import { Drawer } from "antd";
+import { Drawer, Alert } from "antd";
 
 class LelTagsPanel extends Component {
   render() {
@@ -35,6 +35,11 @@ class LelNavPanel extends Component {
         height="bottom"
         visible={this.props.visible}
       >
+        <Alert
+          message={"Names can also be search via 'tags:' Command"}
+          type="info"
+          showIcon
+        />
         <TreeView data={this.props.data} onSelect={this.props.onSelect} />
       </Drawer>
     );
