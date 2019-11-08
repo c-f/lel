@@ -86,6 +86,11 @@ func FindMisatoLogs(misatoPath string) []string {
 	return FindExtension(misatoPath, ".misato.json")
 }
 
+// 
+func FindGraphs(graphDir string) []string{
+	return FindExtension(graphDir, ".graph.json")
+}
+
 // SearchInFile searches a pattern and returns wether or not it was found
 func SearchInFile(filename string, searchword string) (bool, error) {
 

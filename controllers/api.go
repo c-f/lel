@@ -157,6 +157,7 @@ func (api *APIHandler) registerRoutes() {
 
 	// Single Note basic function
 	router.HandleFunc(Routes.Get("Ok"), api.requireAuth(api.Ok))
+	router.HandleFunc(Routes.Get("Stats"), api.requireAuth(api.GetStats))
 	router.HandleFunc(Routes.Get("Get"), api.requireAuth(api.GetMDFile))
 	router.HandleFunc(Routes.Get("Meta"), api.requireAuth(api.GetMDMeta))
 	router.HandleFunc(Routes.Get("Open"), api.requireAuth(api.OpenMDFile))
@@ -579,6 +580,67 @@ func (api *APIHandler) GetTagsArray(w http.ResponseWriter, r *http.Request) {
 		treeStructure.AddItems(url[0], tags...)
 	}
 	JSONResponse(w, treeStructure.BuildAntGraph(), http.StatusOK)
+}
+
+// 
+func(api *APIHandler)GetStats(w http.ResponseWriter, r *http.Request){
+	log.Printf("[%s]","get:stats")
+	if r.Method == "GET" {
+		
+		notes := utils.FindMd(api.Notes)
+		stats := NewStats()
+		stats.Notes =  len(notes)
+
+		if api.mediaHandler != nil {
+			stats.Videos =  len(utils.FindExtension(api.mediaHandler.VideoDir,".webm"))
+			stats.Images =  len(utils.FindExtension(api.mediaHandler.ImageDir,".png"))
+			stats.Graphs =  len(utils.FindGraphs(api.mediaHandler.GraphDir))
+		}
+		if api.misatoHandler != nil{
+			stats.Misato =  len(utils.FindMisatoLogs(api.misatoHandler.Dir))
+			stats.Milestones =  len(utils.FindMilestones(api.misatoHandler.Dir))
+		}
+		
+		// Names
+		// Todos
+
+		names := map[string][]string{}
+		doubs := []string{}
+		for _, fullPath := range notes {
+			id := utils.TrimPart(fullPath, api.Notes)
+			info, err := graph.MetaInfoFromFile(fullPath, id)
+			if err != nil {
+				log.Printf("[!] error %s %s", "get:metas", err)
+				continue
+			}
+			if len(info.Names) > 0 {
+				stats.Nodes = stats.Nodes +1  
+			}
+			for _, name := range info.Names{
+				if val, ok := names[name]; !ok{
+					names[name] = []string{id}
+				}else{
+					doubs = append(doubs, name)
+					names[name] = append(val, id)
+				}
+			}
+		}
+		if len(doubs) > 0 {
+			for _, name := range doubs{
+				for _, p := range names[name]{
+					info := fmt.Sprintf("[%s] %s in %s","doublicate key",name,p)
+					stats.Errors = append(stats.Errors, info)
+				}
+			}
+			
+		}
+
+		JSONResponse(w, stats, http.StatusOK)
+		return
+	}
+	//  TODO wrong method
+	
+	return 
 }
 
 // GetNavArray returns an json object containing the file structure of notes

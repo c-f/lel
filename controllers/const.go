@@ -19,6 +19,7 @@ var (
 
 			// Core information
 			"Ok":         "/core/ok",
+			"Stats":      "/core/stats",
 			"Navigation": "/core/nav",
 			"Folder":     "/core/folder",
 			"Tags":       "/core/tags",
