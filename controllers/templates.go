@@ -174,6 +174,8 @@ const appTemplate = `{{ define "base" }}
         core: {
           // list all the things
           ok: base + "/api/core/ok",
+          stats: base + "/api/core/stats",
+
           nav: base + "/api/core/nav",
           folder: base + "/api/core/folder",
           video: base + "/api/core/videos",

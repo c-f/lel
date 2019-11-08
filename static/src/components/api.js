@@ -175,6 +175,20 @@ export class API {
     });
   };
 
+  stats = () => {
+    return fetch(config.core.stats, {
+      headers: {
+        Authorization: `Token ${this.token}`
+      }
+    }).then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Something went wrong ...");
+      }
+    });
+  };
+
   get = contentPath => {
     return fetch(
       config.notes.get + "?path=" + encodeURIComponent(contentPath),
