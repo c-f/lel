@@ -147,6 +147,20 @@ export class API {
     });
   };
 
+  graphs = () => {
+    return fetch(config.core.graphs, {
+      headers: {
+        Authorization: `Token ${this.token}`
+      }
+    }).then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error("Something went wrong ...");
+      }
+    });
+  };
+
   tags = () => {
     return fetch(config.core.tags, {
       headers: {
@@ -244,8 +258,25 @@ export class API {
     });
   };
 
+  uploadGraph = (name, data) => {
+    return fetch(config.graph.upload + "?name=" + encodeURI(name), {
+      method: "PUT",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${this.token}`
+      }
+    }).then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+
+      throw new Error("Something went wrong");
+    });
+  };
+
   graph = () => {
-    return fetch(config.graph.get, {
+    return fetch(config.graph.current, {
       headers: {
         Authorization: `Token ${this.token}`
       }
@@ -268,6 +299,20 @@ export class API {
         }
       }
     ).then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+
+      throw new Error("Something went wrong");
+    });
+  };
+
+  graphByName = name => {
+    return fetch(config.graph.get + "/" + encodeURI(name), {
+      headers: {
+        Authorization: `Token ${this.token}`
+      }
+    }).then(response => {
       if (response.ok) {
         return response.json();
       }

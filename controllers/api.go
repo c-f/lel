@@ -379,7 +379,7 @@ func (api *APIHandler) VideoUpload(w http.ResponseWriter, r *http.Request) {
 
 // GraphUpload handles video uploaded as multi form
 func (api *APIHandler) GraphUpload(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" { // maybe PUT
+	if r.Method == "PUT" { // maybe PUT
 		absPath, err := api.mediaHandler.Graph(r)
 		if err != nil {
 			JSONErrorResponse(w, err)

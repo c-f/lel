@@ -98,6 +98,7 @@ class LelApp extends React.Component {
 
       // Graph
       showGraphBar: false,
+      graphs: [],
 
       // globalSearchBar
       searchResults: [],
@@ -163,6 +164,7 @@ class LelApp extends React.Component {
     this.getMileStoneData();
     this.getVideoData();
     this.getImagesListData();
+    this.getGraphsData();
     this.getMetasData();
 
     message.success("Refreshed data", 0.5);
@@ -196,6 +198,7 @@ class LelApp extends React.Component {
 
       this.getMileStoneData();
       this.getVideoData();
+      this.getGraphsData();
       this.getImagesListData();
       this.getMetasData();
     }
@@ -304,6 +307,19 @@ class LelApp extends React.Component {
       .then(data => {
         console.log("[Fetch]", "[videos]", data.length);
         this.setState({ videos: data, isLoading: false });
+      })
+      .catch(error => this.setState({ error, isLoading: false }));
+  }
+
+  // get a list of all the graphs available
+  getGraphsData() {
+    this.setState({ isLoading: true });
+
+    this.api
+      .graphs()
+      .then(data => {
+        console.log("[Fetch]", "[graphs]", data.length);
+        this.setState({ graphs: data, isLoading: false });
       })
       .catch(error => this.setState({ error, isLoading: false }));
   }
@@ -741,6 +757,7 @@ class LelApp extends React.Component {
 
           <LelGraphPanel
             visible={this.state.showGraphBar}
+            graphs={this.state.graphs}
             onSelect={this.HandleGraphOnSelect}
             onOpen={this.HandleOpenDocument}
             onShow={this.HandleNavOnSelect}

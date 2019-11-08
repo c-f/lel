@@ -8,7 +8,19 @@ import { HandleLayout, FilterNodes } from "./layout.js";
 import RegisterLelNodes from "./node.jsx";
 import GGEditor, { Koni, withPropsAPI, Item, ItemPanel } from "gg-editor";
 
-import { Row, Col } from "antd";
+import {
+  Row,
+  Col,
+  message,
+  Select,
+  Input,
+  Tooltip,
+  Icon,
+  Button,
+  Tag
+} from "antd";
+const InputGroup = Input.Group;
+const { Search } = Input;
 
 import styles from "./graph.less";
 import { API } from "../api.js";
@@ -23,7 +35,9 @@ class Graph extends React.Component {
       data: { nodes: [], edges: [] },
       raw: { nodes: [], edges: [] },
       filter: "",
-      ok: false
+      previousFilter: "",
+      ok: false,
+      name: ""
     };
   }
   componentDidMount() {
@@ -32,9 +46,7 @@ class Graph extends React.Component {
       ok: true
     });
   }
-  show() {
-    console.log(this.state);
-  }
+
   nodeTrack(e) {
     console.log(e);
     //console.log(this.editor.propsAPI.save())
@@ -42,17 +54,30 @@ class Graph extends React.Component {
     //this.editor.propsAPI.read(old);
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log("updateing");
-    if (this.props.filter !== nextProps.filter) {
-      this.setState(
-        {
-          filter: nextProps.filter
-        },
-        this.HandleData
-      );
-    }
+  shouldComponentUpdate(nextProps, nextState) {
+    // if (this.state.in === nextState.in) {
+    //   if (this.state.inn === nextState.inn) {
+    //     return false;
+    //   }
+    // }
+    return true;
   }
+
+  // LoadData by
+  LoadData = name => {
+    new API().graphByName(name).then(res => {
+      // data, filter
+      console.log("RES", res);
+      if (res.data != undefined && res.filter != undefined) {
+        this.setState({
+          data: res.data,
+          filter: res.filter,
+          previousFilter: res.filter
+        });
+      }
+    });
+  };
+
   HandleData = () => {
     let filtered = FilterNodes(this.state.raw, this.state.filter);
     console.log("filtered", filtered);
@@ -78,10 +103,46 @@ class Graph extends React.Component {
     });
   };
 
+  saveData = e => {
+    if (e != null) {
+      e.preventDefault();
+    }
+    let data = {};
+
+    let name = this.state.name;
+    if (!name.endsWith("graph.json")) {
+      name = `${name}.graph.json`;
+    }
+
+    new API()
+      .uploadGraph(name, {
+        data: this.state.data,
+        filter: this.state.filter
+      })
+      .then(res => {
+        message.success("Saved Graph", 2.5);
+      });
+  };
+
   filter = () => {
     // console.log("lel")
 
     filter;
+  };
+
+  HandleSelectGraph = name => {
+    this.setState({ name: name });
+    this.LoadData(name);
+  };
+
+  HandleSearch = filter => {
+    // todo
+    this.setState({ filter: filter }, this.HandleData);
+  };
+
+  HandleCompass = e => {
+    e.preventDefault();
+    this.setState({ filter: "", name: "" }, this.refreshData);
   };
 
   render() {
@@ -89,13 +150,72 @@ class Graph extends React.Component {
       var read = this.editor.propsAPI.read;
       read(this.state.data);
     }
+
     return (
       <GGEditor className={styles.editor} ref={e => (this.editor = e)}>
         <Row type="flex" className={styles.editorHd}>
           <Col span={24}>
-            <a href="#" onClick={e => this.refreshData(e)}>
-              Refresh
-            </a>
+            <InputGroup>
+              <Row>
+                <Col span={1}>
+                  <Button icon="compass" onClick={this.HandleCompass}></Button>
+                </Col>
+                <Col span={1}>
+                  <Button
+                    icon="cloud-sync"
+                    onClick={e => message.error("Currently not implemented", 1)}
+                  ></Button>
+                </Col>
+                <Col span={1}>
+                  <Button
+                    icon="plus-circle"
+                    onClick={e => message.error("Currently not implemented", 1)}
+                  ></Button>
+                </Col>
+                <Col span={1}>
+                  <Button icon="save" onClick={e => this.saveData(e)}></Button>
+                </Col>
+                <Col span={8}>
+                  <Select
+                    defaultValue=""
+                    style={{ width: "100%" }}
+                    onSelect={this.HandleSelectGraph}
+                  >
+                    {this.props.graphs.map(e => {
+                      return (
+                        <Select.Option value={e} key={e}>
+                          {e}
+                        </Select.Option>
+                      );
+                    })}
+                  </Select>
+                </Col>
+                <Col span={12}>
+                  <Search
+                    addonBefore={
+                      <Tooltip title="Currently searching only one tag is possible">
+                        <Icon type="info-circle" theme="twoTone"></Icon>
+                      </Tooltip>
+                    }
+                    //value={this.state.filter}
+                    //onChange={e => this.setState({ filter: e.target.value })}
+                    onSearch={this.HandleSearch}
+                    style={{ marginBottom: 5 }}
+                  />
+                  {this.state.previousFilter != "" && (
+                    <span>
+                      Previous:{" "}
+                      <Tag color="blue">{this.state.previousFilter}</Tag>
+                    </span>
+                  )}
+                  {this.state.filter != "" && (
+                    <span>
+                      Filter: <Tag color="volcano">{this.state.filter}</Tag>
+                    </span>
+                  )}
+                </Col>
+              </Row>
+            </InputGroup>
             <KoniToolbar />
           </Col>
         </Row>

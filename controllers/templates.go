@@ -152,8 +152,9 @@ const appTemplate = `{{ define "base" }}
         const lel = {
         base: base + "/",
         graph: {
-          get: base + "/api/feat/graph/get"
+          current: base + "/api/feat/graph/get",
           upload: base + "/api/feat/upload/graph",
+          get: base + "/graphs"
         },
         image: {
           upload: base + "/api/feat/upload/image",
