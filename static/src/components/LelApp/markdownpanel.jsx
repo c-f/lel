@@ -189,6 +189,34 @@ class MarkdownPanel extends Component {
     let filename = parts.pop();
     let folder = parts.join("");
 
+    let editor = (
+      <Col span={12}>
+        <form className="editor pure-form">
+          <CodeMirror
+            autoCursor={false}
+            value={this.state.content}
+            defaultValue={this.state.content}
+            onChange={this.handleMarkdownChanges}
+            editorDidMount={editor => {
+              editor.refresh();
+            }}
+            options={{
+              mode: "markdown",
+              theme: "rubyblue",
+              lineNumbers: true,
+              spellcheck: true
+              //lineWrapping: false,
+
+              // keyMap: "sublime"
+            }}
+          ></CodeMirror>
+        </form>
+      </Col>
+    );
+    if (this.props.markdownOnly) {
+      editor = false;
+    }
+
     return (
       <div>
         <Row>
@@ -239,29 +267,8 @@ class MarkdownPanel extends Component {
           </Anchor>
         </Row>
         <Row justify="center">
-          <Col span={12}>
-            <form className="editor pure-form">
-              <CodeMirror
-                autoCursor={false}
-                value={this.state.content}
-                defaultValue={this.state.content}
-                onChange={this.handleMarkdownChanges}
-                editorDidMount={editor => {
-                  editor.refresh();
-                }}
-                options={{
-                  mode: "markdown",
-                  theme: "rubyblue",
-                  lineNumbers: true,
-                  spellcheck: true
-                  //lineWrapping: false,
-
-                  // keyMap: "sublime"
-                }}
-              ></CodeMirror>
-            </form>
-          </Col>
-          <Col span={12}>
+          {editor}
+          <Col span={editor ? 12 : 24}>
             <div className="lel-md-panel">{this.renderMarkdown()}</div>
           </Col>
         </Row>

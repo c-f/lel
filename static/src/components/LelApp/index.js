@@ -116,6 +116,7 @@ class LelApp extends React.Component {
 
       mode: MODY.home,
       external: false,
+      markdownOnly: false,
 
       //
       showNewPath: false,
@@ -542,8 +543,23 @@ class LelApp extends React.Component {
                             // export
                             checkedChildren={<Icon type="block" />}
                             //unCheckedChildren="lel"
-                            defaultChecked
+                            defaultChecked={this.state.external}
                             onChange={this.toggleExternal}
+                          />
+                        </Tooltip>
+                      </span>
+                    </Menu.Item>
+                    <Menu.Item>
+                      markdown:{" "}
+                      <span>
+                        <Tooltip title="Markdown only">
+                          <Switch
+                            style={{ width: "35px" }}
+                            // export
+                            checkedChildren={<Icon type="block" />}
+                            //unCheckedChildren="lel"
+                            defaultChecked={this.state.markdownOnly}
+                            onChange={this.toggleMarkdownOnly}
                           />
                         </Tooltip>
                       </span>
@@ -950,6 +966,7 @@ class LelApp extends React.Component {
             onImageLoad={this.HandleImageOnLoad}
             onHelpClick={this.HandleHelpClick}
             HandleOpenDocument={this.HandleOpenDocument}
+            markdownOnly={this.state.markdownOnly}
             // onClick
             //isLoading={this.state.isLoading}
           />
@@ -1066,6 +1083,12 @@ class LelApp extends React.Component {
     }
     return status;
   }
+
+  toggleMarkdownOnly = e => {
+    this.setState({
+      markdownOnly: !this.state.markdownOnly
+    });
+  };
 
   toggleExternal = e => {
     this.setState({
