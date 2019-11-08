@@ -17,7 +17,8 @@ import {
   Tooltip,
   Icon,
   Button,
-  Tag
+  Tag,
+  Modal
 } from "antd";
 const InputGroup = Input.Group;
 const { Search } = Input;
@@ -37,11 +38,23 @@ class Graph extends React.Component {
       filter: "",
       previousFilter: "",
       ok: false,
-      name: ""
+      name: "",
+      newName: "",
+
+      graphs: []
     };
   }
+
+  getGraphsData = () => {
+    new API().graphs().then(data => {
+      this.setState({ graphs: data });
+    });
+  };
+
   componentDidMount() {
     this.refreshData();
+    this.getGraphsData();
+
     this.setState({
       ok: true
     });
@@ -55,6 +68,9 @@ class Graph extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    if (this.state.newName !== nextState.newName) {
+      return false;
+    }
     // if (this.state.in === nextState.in) {
     //   if (this.state.inn === nextState.inn) {
     //     return false;
@@ -103,13 +119,9 @@ class Graph extends React.Component {
     });
   };
 
-  saveData = e => {
-    if (e != null) {
-      e.preventDefault();
-    }
+  saveData = name => {
     let data = {};
 
-    let name = this.state.name;
     if (!name.endsWith("graph.json")) {
       name = `${name}.graph.json`;
     }
@@ -145,6 +157,27 @@ class Graph extends React.Component {
     this.setState({ filter: "", name: "" }, this.refreshData);
   };
 
+  showModal = () => {
+    Modal.info({
+      title: "New Graph",
+      content: (
+        <div>
+          <Input
+            onChange={e => {
+              this.setState({ newName: e.target.value });
+            }}
+          ></Input>
+        </div>
+      ),
+      onOk: () => {
+        console.log(this.state.newName);
+        this.saveData(this.state.newName);
+        this.getGraphsData();
+      },
+      maskClosable: true
+    });
+  };
+
   render() {
     if (this.state.ok) {
       var read = this.editor.propsAPI.read;
@@ -169,11 +202,16 @@ class Graph extends React.Component {
                 <Col span={1}>
                   <Button
                     icon="plus-circle"
-                    onClick={e => message.error("Currently not implemented", 1)}
+                    onClick={e => {
+                      this.showModal();
+                    }}
                   ></Button>
                 </Col>
                 <Col span={1}>
-                  <Button icon="save" onClick={e => this.saveData(e)}></Button>
+                  <Button
+                    icon="save"
+                    onClick={e => this.saveData(this.state.name)}
+                  ></Button>
                 </Col>
                 <Col span={8}>
                   <Select
@@ -181,7 +219,7 @@ class Graph extends React.Component {
                     style={{ width: "100%" }}
                     onSelect={this.HandleSelectGraph}
                   >
-                    {this.props.graphs.map(e => {
+                    {this.state.graphs.map(e => {
                       return (
                         <Select.Option value={e} key={e}>
                           {e}
