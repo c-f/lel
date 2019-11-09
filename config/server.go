@@ -20,6 +20,8 @@ type ServerConfig struct {
 	Editor    string
 
 	Debug        bool
+	// Develop contains the frontendURL (if empty defaults to /static/lel-prod.js)
+	Develop		 string 
 	EnableUpload bool
 
 	TLS      bool
@@ -64,6 +66,9 @@ func (s *ServerConfig) Prepare() (err error) {
 		if empty {
 			log.Printf("[%s] no files found in %s:  %s ", "!", "staticDir", s.StaticDir)
 		}
+	}
+	if s.Hostname == "" {
+		s.Hostname = s.ListenURL
 	}
 	return
 }

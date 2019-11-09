@@ -7,10 +7,11 @@ import (
 )
 
 var (
+	// Directory not specified
 	ErrNoDirSpecified = errors.New("No Dir specified")
 )
 
-// Project contains all information about the project paths
+// ProjectConfig contains all information about the project paths
 // this includes paths, where project relevant information are stored
 type ProjectConfig struct {
 	NotesDir string

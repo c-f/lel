@@ -5,11 +5,14 @@ import (
 )
 
 const (
-	VERSION = "v0.0.1"
+    // Current Version of LeL
+    VERSION = "v0.0.1"
+    // Current stage of the development
 	STAGE   = "beta"
 )
 
 var (
+    // BANNER is the LeL Banner 
 	BANNER = fmt.Sprintf(`
       __        __            __
      /\__\     /\  \         /\__\

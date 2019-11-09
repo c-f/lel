@@ -106,7 +106,6 @@ func main() {
 		c = config.Config{
 			Server: config.ServerConfig{
 				ListenURL: *addr,
-				Hostname:  "hostname",
 
 				Editor:    *editor,
 				StaticDir: filepath.Join(*appDir, "static/dist"),
@@ -132,6 +131,10 @@ func main() {
 			}
 			fmt.Println(string(bts))
 			os.Exit(0)
+		}
+		if os.Getenv("LEL_FRONTEND_URL") != "" {
+			
+			c.Server.Develop = os.Getenv("LEL_FRONTEND_URL")
 		}
 
 	}
