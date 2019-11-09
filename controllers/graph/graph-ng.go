@@ -8,10 +8,12 @@ import (
 	"sort"
 )
 
+// Error information
 var (
 	ErrNoMetaInfo = errors.New("No Metainformation could be found ")
 )
 
+// Export defines all information necessary, which can be used by the frontend graph
 type Export struct {
 	Nodes   []*Node           `json:"nodes"`
 	Edges   []*Edge           `json:"edges"`
@@ -19,6 +21,8 @@ type Export struct {
 	Errs    map[string]string `json:"-"`
 }
 
+// MetaGraph is a collector for all Metainformation and its nameRegister
+// MetaGraph can be used to create a Export "object" and mapps stuff
 type MetaGraph struct {
 	infos map[string]*MetaInfo
 	edges map[string]*MetaInfo
@@ -29,17 +33,21 @@ type MetaGraph struct {
 	doublicates map[string]string
 }
 
+// Register defines which types a enty is (info,edge,node) and what the key(name)
+// should be used. This is necessary to gerate multiple map for names
 type Register struct {
 	Type int
 	Key  string
 }
 
+// New generates a new MetaGraph object
 func New() *MetaGraph {
 	g := &MetaGraph{}
 	g.Clear()
 	return g
 }
 
+// IndexFile gets a filepath and a origin(key), which is then added to the Metagraph, based on the facts
 func (g *MetaGraph) IndexFile(filePath, origin string) error {
 	info, err := MetaInfoFromFile(filePath, origin)
 	if err != nil {
@@ -62,6 +70,7 @@ func (g *MetaGraph) Get(id string) *MetaInfo {
 	return nil
 }
 
+// Add adds the MetaInfo to the Graph, based on the type, adds names to the map
 func (g *MetaGraph) Add(m *MetaInfo) error {
 	if ok := m.Valid(); !ok {
 		return ErrNoMetaInfo
@@ -99,6 +108,7 @@ func (g *MetaGraph) Add(m *MetaInfo) error {
 	return nil
 }
 
+// Clear empties all registries for the Graph
 func (g *MetaGraph) Clear() {
 	g.infos = make(map[string]*MetaInfo)
 	g.edges = make(map[string]*MetaInfo)
@@ -107,7 +117,11 @@ func (g *MetaGraph) Clear() {
 	g.doublicates = make(map[string]string)
 }
 
+
+// Export converts the MetaGraph in a Export object
 func (g *MetaGraph) Export() Export {
+
+	// initial empty state
 	nodes := []*Node{}
 	edges := []*Edge{}
 	unknown := make(map[string]string)
@@ -121,7 +135,10 @@ func (g *MetaGraph) Export() Export {
 				continue
 			}
 
+			// get key for an alias
 			if register, ok := g.nameRegister[alias]; ok {
+				
+				// Add reference
 				switch register.Type {
 				case NODE_TYPE:
 					g.nodes[register.Key].AddRef(origin)
@@ -132,6 +149,8 @@ func (g *MetaGraph) Export() Export {
 					log.Println("Could not add info to this type", register.Type)
 				}
 			} else {
+
+				// currently unknown, therefore saving the origin with the alias
 				unknown[alias] = origin
 				continue
 			}
@@ -143,8 +162,10 @@ func (g *MetaGraph) Export() Export {
 		node := NewOriginNode(info)
 		nodes = SortedInsertNodes(nodes, node)
 
+		// First relations
 		for _, raw := range info.Relations {
 			var edge *Edge
+			
 			// origin
 			subject, relation, object, err := GetRefRelation(raw, origin)
 			if err != nil {

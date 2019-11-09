@@ -2,56 +2,64 @@ package controllers
 
 import (
 	"fmt"
+	"html/template"
 )
 
 const (
+	// CERTPREFIX is the prefix for the https certificates
 	CERTPREFIX = "LeL-server"
 )
 
 var (
+	// Routes defines all endpoints for the backend, easy accessible via a keyword
 	Routes = &Mapping{
-		Config: map[string]string{
+		Config: map[string]template.JSStr{
 			// single note
-			"Get":  "/notes/get",
-			"Meta": "/notes/meta",
-			"Open": "/notes/open",
-			"Remove": "/notes/remove",
+			"Get":  template.JSStr("/notes/get"),
+			"Meta": template.JSStr("/notes/meta"),
+			"Open": template.JSStr("/notes/open"),
+			"Remove": template.JSStr("/notes/remove"),
 
 			// Core information
-			"Ok":         "/core/ok",
-			"Stats":      "/core/stats",
-			
-			"Navigation": "/core/nav",
-			"Folder":     "/core/folder",
-			"Tags":       "/core/tags",
-			"Metas":      "/core/metas",
-			"Milestone":  "/core/milestones",
-			"Videos":     "/core/videos",
-			"Images":     "/core/images",
-			"Graphs": 	  "/core/graphs",
+			"Ok":         template.JSStr("/core/ok"),
+			"Stats":      template.JSStr("/core/stats"),
+
+			"Navigation": template.JSStr("/core/nav"),
+			"Folder":     template.JSStr("/core/folder"),
+			"Tags":       template.JSStr("/core/tags"),
+			"Metas":      template.JSStr("/core/metas"),
+			"Milestone":  template.JSStr("/core/milestones"),
+			"Videos":     template.JSStr("/core/videos"),
+			"Images":     template.JSStr("/core/images"),
+			"Graphs": 	  template.JSStr("/core/graphs"),
 
 			// search
-			"Search":  "/core/search",
-			"Watcher": "/core/channel",
+			"Search":  template.JSStr("/core/search"),
+			"Watcher": template.JSStr("/core/channel"),
 
 			// features
-			"GraphView":      "/feat/graph/get",
+			"GraphView":      template.JSStr("/feat/graph/get"),
 
-			"ImageUpload":    "/feat/upload/image",
-			"VideoUpload":    "/feat/upload/video",
-			"MarkdownUpload": "/feat/upload/md",
-			"GraphUpload":    "/feat/upload/graph",
+			"ImageUpload":    template.JSStr("/feat/upload/image"),
+			"VideoUpload":    template.JSStr("/feat/upload/video"),
+			"MarkdownUpload": template.JSStr("/feat/upload/md"),
+			"GraphUpload":    template.JSStr("/feat/upload/graph"),
 
-			"Misato":       "/feat/misato",
-			"MisatoSearch": "/feat/misato/search",
+			"Misato":       template.JSStr("/feat/misato"),
+			"MisatoSearch": template.JSStr("/feat/misato/search"),
+
+			// Frontend path
+			"Frontend": template.JSStr("/static/app-prod.js"),
 		},
 	}
 )
 
+// Mapping defines a simple interface to access and write a config
 type Mapping struct {
-	Config map[string]string
+	Config map[string]template.JSStr
 }
 
+// Get retrieves a string based on the key, when existed
 func (m *Mapping) Get(key string) string {
 
 	if template, ok := m.Config[key]; ok {
@@ -59,6 +67,8 @@ func (m *Mapping) Get(key string) string {
 	}
 	return ""
 }
+
+// Set adds the val to the config with key as the key
 func (m *Mapping) Set(key, val string) {
-	m.Config[key] = val
+	m.Config[key] = template.JSStr(val)
 }

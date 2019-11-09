@@ -27,8 +27,9 @@ import (
 	"github.com/google/uuid"
 )
 
-// information can be retrieved through the G6 Api
-// GraphNode define a node object which is a representation of different stuff :)
+
+// Node define a node object which is a representation of different stuff :)
+//information can be retrieved through the G6 Api
 type Node struct {
 	Type  string `json:"type"`
 	Size  string `json:"size"`
@@ -51,10 +52,12 @@ type Node struct {
 	IsEmpty bool `json:"-"`
 }
 
+//NewMDUUID returns the uuid for a new Node
 func NewMDUUID() string {
 	return fmt.Sprintf("%s.md", uuid.New().String())
 }
 
+// NewNode returns a new Node with default settings
 func NewNode(label string) *Node {
 	return &Node{
 		Id:    NewMDUUID(),
@@ -73,7 +76,7 @@ func NewNode(label string) *Node {
 	}
 }
 
-//
+// NewOriginNode creates a new Node based on the provided MetaInformation
 func NewOriginNode(info *MetaInfo) *Node {
 	return &Node{
 		Id:    info.Id,
@@ -105,6 +108,7 @@ func NewOriginNode(info *MetaInfo) *Node {
 }
 */
 
+// Edge represents a relation between notes  
 // Representation of a connections between nodes
 type Edge struct {
 	Source string `json:"source"`
@@ -125,7 +129,8 @@ type Edge struct {
 	IsEmpty bool `json:"-"`
 }
 
-//
+// NewOriignEdge returns a new edge, based on the metainformation
+// which describes the edge, as well as source and sink/target
 func NewOriginEdge(info *MetaInfo, source, target string) *Edge {
 
 	return &Edge{
@@ -149,6 +154,8 @@ func NewOriginEdge(info *MetaInfo, source, target string) *Edge {
 		IsEmpty: false,
 	}
 }
+
+// NewEdge returns a new Edge filled with default values
 func NewEdge(label, source, target string) *Edge {
 	return &Edge{
 		Source: source,

@@ -13,6 +13,7 @@ import (
 
 // TODO refactor Put commands --> in util
 
+// Errors for misato
 var (
 	ErrNoFiles            = errors.New("No MisatoFiles available in this location")
 	ErrMissingInformation = errors.New("Invalid entries - fields are missing")
@@ -56,6 +57,7 @@ func (m *Misato) SearchCommands(search string) (result map[string][]string, err 
 	return result, nil
 }
 
+// GetByTime retuns all CLILogs, based on a start and stop frame
 func (m *Misato) GetByTime(start, stop int) (result []CLILog, err error) {
 	result = []CLILog{}
 
@@ -86,6 +88,7 @@ func (m *Misato) GetByTime(start, stop int) (result []CLILog, err error) {
 	return
 }
 
+// PutActivity saves a activity to the filesystem
 func (m *Misato) PutActivity(activity Activity, id string) error {
 	if !activity.Valid() {
 		return ErrMissingInformation
@@ -113,7 +116,7 @@ func (m *Misato) PutActivity(activity Activity, id string) error {
 	return err
 }
 
-// PutCommands saves the Command
+// PutCommand saves the Command to the filesystem
 func (m *Misato) PutCommand(clilog CLILog, id string) error {
 	if !clilog.Valid() {
 		return ErrMissingInformation
@@ -141,7 +144,7 @@ func (m *Misato) PutCommand(clilog CLILog, id string) error {
 	return err
 }
 
-// getActivities
+// GetActivities returns all the Activities from the filesystem
 func (m *Misato) GetActivities() []*Activity {
 	files := utils.FindActivities(m.Dir)
 
@@ -166,8 +169,7 @@ func (m *Misato) GetActivities() []*Activity {
 	return activities
 }
 
-// aaa
-// GetMileStonesViewer
+// GetMileStones returns all milestones in the directory
 func (m *Misato) GetMileStones() []*Milestone {
 	files := utils.FindMilestones(m.Dir)
 

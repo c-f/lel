@@ -13,11 +13,15 @@ import (
 )
 
 var (
+	// ErrNoValidRelation indicates, that a syntax error happens in the relation
 	ErrNoValidRelation = errors.New("No Valid Relation")
 
 	referenceReg = regexp.MustCompile(utils.REFERENCE_REG_PATTERN)
 )
 
+// GetRefInfo returns if the raw input is ref or not
+// @ref hello
+// this is only valid for @entity info types
 func GetRefInfo(raw string) (result string) {
 	if isRelation := strings.HasPrefix(raw, "(") || strings.HasSuffix(raw, ")"); isRelation {
 		return ""
@@ -26,6 +30,8 @@ func GetRefInfo(raw string) (result string) {
 	return raw
 }
 
+// GetRefRelation Splits the raw input into the parts, the origin is the key 
+// (subject)->[relation]->(object)
 func GetRefRelation(raw, origin string) (subject, relation, object string, err error) {
 	results := referenceReg.FindAllStringSubmatch(raw, -1)
 	if len(results) <= 0 {
@@ -45,12 +51,17 @@ func GetRefRelation(raw, origin string) (subject, relation, object string, err e
 	return
 }
 
+// IsRelationAlias checks if a relation string is an alias or not
+// this is done by checking if the first char is a collon
+// (subject)->[:hello]->(object)
 func IsRelationAlias(relation string) bool {
 	if strings.HasPrefix(relation, ":") {
 		return true
 	}
 	return false
 }
+
+// GetAlias returns the alias, without the collon prefix
 func GetAlias(relation string) string {
 	return strings.TrimPrefix(":", relation)
 }

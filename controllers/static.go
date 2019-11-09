@@ -7,6 +7,13 @@ import (
 	"strings"
 )
 
+// Errors 
+var (
+	ErrNoDirectoryListing = errors.New("No Directory Listing ")
+	ErrOnlyValidExtension = errors.New("Only request allowed extensions")
+)
+
+
 // NewStaticHandler returns a new Static Fileserver
 func NewStaticHandler(staticPath string) http.Handler {
 	return http.StripPrefix("/static/", http.FileServer(http.Dir(staticPath)))
@@ -28,21 +35,20 @@ func NewSuffixHandler(path, suffix string) func(string) http.Handler {
 	}
 }
 
-var (
-	ErrNoDirectoryListing = errors.New("No Directory Listing ")
-	ErrOnlyValidExtension = errors.New("Only request allowed extensions")
-)
-
+// EmptyHandler writes a sting to the Response
 func EmptyHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Sorry not specified")
 	return
 }
 
+// SuffixFS represents a whitelist filesystem, where files are only accessed,
+// when the extension is allowed
 type SuffixFS struct {
 	fs              http.FileSystem
 	whiteListSuffix string
 }
 
+// Open returns a File based on an input path, when the constraints are fullfilled
 func (nfs SuffixFS) Open(path string) (http.File, error) {
 
 	if ok := strings.HasSuffix(path, nfs.whiteListSuffix); !ok {

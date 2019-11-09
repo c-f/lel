@@ -55,9 +55,13 @@ func NewServer(sConf *config.ServerConfig, pConf *config.ProjectConfig) (s *Serv
 
 	// Debug Output
 	if s.c.Debug {
+		log.Println(Routes.Get("Hostname"))
 		log.Printf("[*] Development mode on \n")
 		log.SetFlags(log.LstdFlags | log.Lshortfile)
 		router.Use(devMiddleware)
+	}
+	if s.c.Develop != "" {
+		Routes.Set("Frontend",s.c.Develop)
 	}
 	if s.c.StaticDir != "" {
 		static := NewStaticHandler(s.c.StaticDir)
@@ -103,7 +107,10 @@ func NewServer(sConf *config.ServerConfig, pConf *config.ProjectConfig) (s *Serv
 
 // Base returns the app template for vue js
 func (s *Server) Base(w http.ResponseWriter, r *http.Request) {
-	getBase(w).ExecuteTemplate(w, "base", Routes.Config)
+	err := getBase(w).ExecuteTemplate(w, "base", Routes.Config)
+	if err != nil{
+		log.Fatal(err)
+	}
 }
 
 // Start starts the webserver
@@ -132,12 +139,11 @@ func (s *Server) Start() error {
 		log.Printf("[*] Using HTTPS")
 		log.Printf("Starting admin server at https://%s", s.c.ListenURL)
 		return s.server.ListenAndServeTLS(crtFile, keyFile)
-	} else {
+	} 
 
-		log.Printf("[!] Insecure HTTP - switch to HTTPS !")
-		log.Printf("Starting admin server at http://%s", s.c.ListenURL)
-		return s.server.ListenAndServe()
-	}
+	log.Printf("[!] Insecure HTTP - switch to HTTPS !")
+	log.Printf("Starting admin server at http://%s", s.c.ListenURL)
+	return s.server.ListenAndServe()
 }
 
 // Shutdown attempts to gracefully shutdown the server.

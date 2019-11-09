@@ -1,5 +1,6 @@
 package controllers
 
+// Stats contains all relevant information, which is neccessary for statistical analysis
 type Stats struct{
 	Notes int `json:"notes"`
 	Videos int `json:"videos"`
@@ -12,6 +13,7 @@ type Stats struct{
 	Errors []string  `json:"errors"`
 }
 
+// NewStats creates a new Stats objects
 func NewStats()*Stats{
 	return &Stats{
 		Errors: []string{},

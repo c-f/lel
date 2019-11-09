@@ -45,7 +45,7 @@ func TestEmptyRef(t *testing.T) {
 func TestBadInput(t *testing.T) {
 	g := New()
 	badInfos := []*MetaInfo{
-		&MetaInfo{
+		{
 			Names:  []string{"bob", "bob.dns.local"},
 			Entity: "human",
 			Id:     "non-existing/bob-origin.md",
@@ -53,7 +53,7 @@ func TestBadInput(t *testing.T) {
 				"(this)->[(pointsto)]->(alice)",
 			},
 		},
-		&MetaInfo{
+		{
 			Names:  []string{"alice", "alice.dns.local"},
 			Entity: "human",
 			Id:     "non-existing/alice-origin.md",
@@ -62,7 +62,7 @@ func TestBadInput(t *testing.T) {
 				"(this)->[:this]->(this)",
 			},
 		},
-		&MetaInfo{
+		{
 			Names:  []string{"alice", "alice.dns.local"},
 			Entity: "human",
 			Id:     "non-existing/alice-origin.md",
@@ -102,7 +102,7 @@ func TestEmptyEdgeLoop(t *testing.T) {
 	// test variables
 	var names []string
 	infos := []*MetaInfo{
-		&MetaInfo{
+		{
 			Names:  []string{"bob", "bob.dns.local"},
 			Entity: "human",
 			Id:     "non-existing/bob-origin.md",
@@ -110,7 +110,7 @@ func TestEmptyEdgeLoop(t *testing.T) {
 				"(this)->[(pointsto)]->(alice)",
 			},
 		},
-		&MetaInfo{
+		{
 			Names:  []string{"alice", "alice.dns.local"},
 			Entity: "human",
 			Id:     "non-existing/alice-origin.md",
@@ -160,7 +160,7 @@ func TestNodesWithEmptyEdge(t *testing.T) {
 	// test variables
 	var names []string
 	infos := []*MetaInfo{
-		&MetaInfo{
+		{
 			Names:  []string{"bob", "bob.dns.local"},
 			Entity: "human",
 			Id:     "non-existing/bob-origin.md",
@@ -168,7 +168,7 @@ func TestNodesWithEmptyEdge(t *testing.T) {
 				"(this)->[pointsto]->(alice)",
 			},
 		},
-		&MetaInfo{
+		{
 			Names:     []string{"alice", "alice.dns.local"},
 			Entity:    "human",
 			Id:        "non-existing/alice-origin.md",
@@ -223,7 +223,7 @@ func TestTwoNodes(t *testing.T) {
 	t.Log("Testing", "TestTwoNodes")
 	g := New()
 	infos := []*MetaInfo{
-		&MetaInfo{
+		{
 			Names:  []string{"bob"},
 			Id:     "non-existing/node.md",
 			Entity: "node",
@@ -231,7 +231,7 @@ func TestTwoNodes(t *testing.T) {
 				"(this)->[likes]->(alice)",
 			},
 		},
-		&MetaInfo{
+		{
 			Names:  []string{"alice"},
 			Id:     "non-existing/alice-node.md",
 			Entity: "node",

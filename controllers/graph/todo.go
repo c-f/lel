@@ -5,8 +5,9 @@ import (
 	"strings"
 )
 
-// https://github.com/todotxt/todo.txt#todotxt-format-rules
+
 // Todo is the structor of the todo.txt
+// https://github.com/todotxt/todo.txt#todotxt-format-rules
 type Todo struct {
 	Complete       bool     `json:"done"`
 	Priority       string   `json:"priority"`
@@ -36,13 +37,14 @@ const (
 	ACTION_PATTERN = "lel:"
 )
 
+// NewTodo returns an empty todo
 func NewTodo() *Todo {
 	return &Todo{
 		Projects: []string{},
 	}
 }
 
-// Convert TODO from the raw string into a todo rule
+// ConvertTodo parses the raw string and convert it into a todo
 func ConvertTodo(raw string, context string) (todo *Todo, noerror bool) {
 	if isEmpty := emptyReg.MatchString(raw); isEmpty {
 		return
@@ -132,6 +134,7 @@ func pop(in []string) (item string, out []string, ok bool) {
 	return
 }
 
+// Regular expressions for specific inputs
 var (
 	prioReg  = regexp.MustCompile(`^(\([A-Z]\))$`)
 	dateReg  = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`)

@@ -7,25 +7,23 @@ as well as managing other components, which are used to generate information
 package controllers
 
 import (
-	"errors"
+	
 	"github.com/c-f/lel/controllers/graph"
 	"github.com/c-f/lel/controllers/media"
 	"github.com/c-f/lel/controllers/misato"
-
 	"github.com/c-f/lel/utils"
-
+	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
+	
 	"net/http"
 	"os"
-
+	"errors"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
-
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
 	"log"
 	"sort"
 	//	"context"
@@ -117,7 +115,7 @@ func (api *APIHandler) AddMisatoHandler(misatoPath string) error {
 	return err
 }
 
-// AddImageHandler returns an image filehandler
+// AddUploadHandler returns an uphandler, which is able to handle img/video/graph uploads
 func (api *APIHandler) AddUploadHandler(imagePath, videoPath, graphPath string) error {
 	handler, err := media.New(imagePath, videoPath, graphPath)
 	api.mediaHandler = handler
@@ -263,7 +261,7 @@ func (api *APIHandler) Graphs(w http.ResponseWriter, r *http.Request) {
 }
 
 
-// GetMilestone returns all the milestones or create a new one
+// Milestone returns all the milestones or create a new one
 // GET structure=fast
 // POST {}
 func (api *APIHandler) Milestone(w http.ResponseWriter, r *http.Request) {
@@ -777,7 +775,7 @@ func (api *APIHandler) GetMDMeta(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// GetFile returns the md file in the notedir
+// GetMDFile returns the md file in the notedir, based on the query get path parameter
 func (api *APIHandler) GetMDFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	inputPath := r.URL.Query().Get("path")
@@ -836,7 +834,7 @@ func (api *APIHandler)RemoveMDFile(w http.ResponseWriter, r *http.Request){
 
 }
 
-// EditFile opens the File in an editor and create
+// OpenMDFile opens the File in an editor and create the folder if necessary
 func (api *APIHandler) OpenMDFile(w http.ResponseWriter, r *http.Request) {
 	inputPath := r.URL.Query().Get("path")
 	editor := r.URL.Query().Get("editor")
@@ -880,7 +878,7 @@ func (api *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	api.handler.ServeHTTP(w, r)
 }
 
-// Websocket to start changing handler
+// Watcher start the communication
 func (api *APIHandler) Watcher(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {

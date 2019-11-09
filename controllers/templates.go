@@ -12,12 +12,70 @@ func getTemplate(w http.ResponseWriter, tmpl string) *template.Template {
 }
 
 func getBase(w http.ResponseWriter) *template.Template {
-	tmpl, err := template.New("app").Parse(appTemplate)
+	tmpl, err := template.New("app").Parse(apiBackend)
 	if err != nil {
 		log.Fatal(err)
-	}
+  }
+  _, err = tmpl.Parse(appTemplate)
+  if err != nil{
+    log.Fatal(err)
+  }
 	return tmpl
 }
+
+const apiBackend = `{{ define "endpoints" }}
+const base = "https://{{ .Hostname }}";
+const apiBase = base + "/api"
+      
+const socketBase = "wss://{{ .Hostname }}";
+
+  const lel = {
+  base: base + "/",
+  graph: {
+    current: apiBase + {{ .GraphView }},
+    upload: apiBase + {{ .GraphUpload }},
+    get: base + "/graphs"
+  },
+  image: {
+    upload: apiBase + {{ .ImageUpload }},
+    get: base + "/images"
+  },
+  video: {
+    upload: apiBase + {{ .VideoUpload}},
+    get: base + "/videos"
+  },
+  notes: {
+    get: apiBase + {{ .Get }},
+    open: apiBase + {{ .Open }},
+    remove: apiBase + {{ .Remove }},
+    meta: apiBase + {{ .Meta }},
+    upload: apiBase + {{ .MarkdownUpload }}
+  },
+  core: {
+    // list all the things
+    ok: apiBase + {{ .Ok }},
+    stats: apiBase + {{ .Stats }},
+
+    nav: apiBase + {{ .Navigation }},
+    folder: apiBase + {{ .Folder }},
+    video: apiBase + {{ .Videos }},
+    images: apiBase + {{ .Images }},
+    graphs: apiBase + {{ .Graphs}},
+
+    // within
+    tags: apiBase + {{ .Tags }},
+    milestone: apiBase + {{ .Milestone }},
+    metas: apiBase + {{ .Metas }},
+    search: apiBase + {{ .Search}},
+
+    channel: socketBase + "/api" + {{ .Watcher}}
+  },
+  misato: {
+    search: apiBase + {{ .MisatoSearch }},
+    section: apiBase + {{ .Misato }}
+  }
+};
+{{ end }}`
 
 const appTemplate = `{{ define "base" }}
 <!DOCTYPE html>
@@ -145,57 +203,8 @@ const appTemplate = `{{ define "base" }}
       }
     </style>
     <script>
-      const base = "https://127.0.0.1:8888";
-      
-      const socketBase = "wss://127.0.0.1:8888";
+      {{ template "endpoints" . }}
 
-        const lel = {
-        base: base + "/",
-        graph: {
-          current: base + "/api/feat/graph/get",
-          upload: base + "/api/feat/upload/graph",
-          get: base + "/graphs"
-        },
-        image: {
-          upload: base + "/api/feat/upload/image",
-          get: base + "/images"
-        },
-        video: {
-          upload: base + "/api/feat/upload/video",
-          get: base + "/videos"
-        },
-        notes: {
-          get: base + "/api/notes/get",
-          open: base + "/api/notes/open",
-          remove: base + "/api/notes/remove",
-          meta: base + "/api/notes/meta",
-          upload: base + "/api/feat/upload/md"
-        },
-        core: {
-          // list all the things
-          ok: base + "/api/core/ok",
-          stats: base + "/api/core/stats",
-
-          nav: base + "/api/core/nav",
-          folder: base + "/api/core/folder",
-          video: base + "/api/core/videos",
-          images: base + "/api/core/images",
-          graphs: base + "/api/core/graphs",
-
-          // within
-          tags: base + "/api/core/tags",
-          milestone: base + "/api/core/milestones",
-          metas: base + "/api/core/metas",
-          search: base + "/api/core/search",
-
-          channel: socketBase + "/api/core/channel"
-        },
-        misato: {
-          search: base + "/api/feat/misato/search",
-          section: base + "/api/feat/misato"
-        }
-      };
-      // TODO dynamic Routes 
     </script>
     <!-- 
     href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/codemirror.min.css"
@@ -221,7 +230,7 @@ const appTemplate = `{{ define "base" }}
     <div id="app"></div>
 
     <!-- App -->
-    <script src="/static/app-prod.js"></script>
+    <script src={{.Frontend}}></script>
   </body>
 </html>
 {{ end }}
