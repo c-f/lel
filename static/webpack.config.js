@@ -78,7 +78,8 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(pkg.version),
-      HOMEPAGE: JSON.stringify(pkg.homepage)
+      HOMEPAGE: JSON.stringify(pkg.homepage),
+      MODE: "prod"
     })
   ]
 };
