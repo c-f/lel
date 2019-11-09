@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Tag, Descriptions, Badge, Alert, Icon, List } from "antd";
+import { Tag, Descriptions, Badge, Icon, notification } from "antd";
 import { API } from "../api";
 class Homepanel extends Component {
   state = {};
@@ -31,66 +31,63 @@ class Homepanel extends Component {
     );
     let description = <Icon type="loading" />;
     if (this.state.stats !== undefined) {
+      const {
+        notes,
+        images,
+        videos,
+        misato,
+        milestones,
+        graphs,
+        errors
+      } = this.state.stats;
       description = (
         <div style={{ marginTop: 40 }}>
           <Descriptions>
             <Descriptions.Item label="Notes">
-              <Badge
-                count={this.state.stats.notes}
-                style={{ backgroundColor: "#52c41a" }}
-              />
+              <Badge count={notes} style={{ backgroundColor: "#52c41a" }} />
             </Descriptions.Item>
             <Descriptions.Item label="Images">
-              <Badge
-                count={this.state.stats.images}
-                style={{ backgroundColor: "#52c41a" }}
-              />
+              <Badge count={images} style={{ backgroundColor: "#52c41a" }} />
             </Descriptions.Item>
             <Descriptions.Item label="Videos">
-              <Badge
-                count={this.state.stats.videos}
-                style={{ backgroundColor: "#52c41a" }}
-              />
+              <Badge count={videos} style={{ backgroundColor: "#52c41a" }} />
             </Descriptions.Item>
             <Descriptions.Item label="Misato">
-              <Badge
-                count={this.state.stats.misato}
-                style={{ backgroundColor: "#52c41a" }}
-              />
+              <Badge count={misato} style={{ backgroundColor: "#52c41a" }} />
             </Descriptions.Item>
             <Descriptions.Item label="Milestones">
               <Badge
-                count={this.state.stats.milestones}
+                count={milestones}
                 style={{ backgroundColor: "#52c41a" }}
               />
             </Descriptions.Item>
             <Descriptions.Item label="Graphs">
+              <Badge count={graphs} style={{ backgroundColor: "#52c41a" }} />
+            </Descriptions.Item>
+            <Descriptions.Item label="Errors">
               <Badge
-                count={this.state.stats.graphs}
-                style={{ backgroundColor: "#52c41a" }}
+                count={errors.length}
+                style={{
+                  backgroundColor: errors.length > 0 ? "red" : "#52c41a"
+                }}
+                onClick={e => {
+                  if (errors.length > 0) {
+                    notification.warn({
+                      message: "Error message",
+                      description: (
+                        <ul>
+                          {errors.map(err => {
+                            return <li>{err}</li>;
+                          })}
+                        </ul>
+                      )
+                    });
+                  }
+                }}
               />
             </Descriptions.Item>
           </Descriptions>
 
-          {this.state.stats.errors && (
-            <List
-              style={{ marginTop: 20 }}
-              header={<h4>Errors</h4>}
-              //footer={<div>Footer</div>}
-              //bordered
-              dataSource={this.state.stats.errors}
-              renderItem={item => (
-                <List.Item>
-                  <Alert
-                    message={item}
-                    type="error"
-                    showIcon
-                    style={{ marginBottom: 10 }}
-                  />
-                </List.Item>
-              )}
-            />
-          )}
           <div></div>
         </div>
       );
