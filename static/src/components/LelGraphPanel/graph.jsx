@@ -133,6 +133,8 @@ class Graph extends React.Component {
       })
       .then(res => {
         message.success("Saved Graph", 2.5);
+        this.getGraphsData();
+        // reload
       });
   };
 
