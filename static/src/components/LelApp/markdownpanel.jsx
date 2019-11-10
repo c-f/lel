@@ -226,7 +226,8 @@ class MarkdownPanel extends Component {
                 border: "2px solid #eee"
               }}
               onBack={e => {
-                window.history.back();
+                this.props.onBack();
+                //window.history.back();
               }}
               title={filename}
               subTitle={folder}
