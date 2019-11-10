@@ -13,9 +13,17 @@ class MisatoPanel extends React.Component {
 
   render() {
     return (
-      <div>
+      <div
+        style={{
+          background: "white",
+          padding: 10,
+          borderRadius: 3,
+          width: "100%"
+        }}
+      >
         <Search onSearch={this.props.onSearch} />
         <Table
+          style={{ maxWidth: "100%" }}
           size="small"
           expandedRowRender={record => (
             <p style={{ margin: 0 }}>{record.match}</p>

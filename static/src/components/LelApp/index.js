@@ -117,6 +117,7 @@ class LelApp extends React.Component {
       mode: MODY.home,
       external: false,
       markdownOnly: false,
+      lighttheme: true,
 
       //
       showNewPath: false,
@@ -472,13 +473,23 @@ class LelApp extends React.Component {
 
   render() {
     //  <Route path="/" exact component={}
+    let sty = {
+      background: "#16314a"
+      //backgroundColor: "rgb(0, 80, 100)"
+    };
+    if (this.state.lighttheme) {
+      sty.background = "#f0f2f5";
+      //sty.backgroundColor = "rgb(0, 80, 100)";
+    }
+
     return (
       <Layout
-      // style={{
-      //   minHeight: "100vh",
-      //   marginLeft: this.state.collapsed ? "80px" : "200px"
-      // }}
-      // onKeyPress={this.handleKeyPress}
+        style={sty}
+        // style={{
+        //   minHeight: "100vh",
+        //   marginLeft: this.state.collapsed ? "80px" : "200px"
+        // }}
+        // onKeyPress={this.handleKeyPress}
       >
         {/*  <input
           style={{ display: "hidden", position: "absolute", zIndex: "-1" }}
@@ -522,9 +533,9 @@ class LelApp extends React.Component {
                   </span>
                 </Menu.Item>
                 <SubMenu
-                  onTitleClick={() => this.this.setState({ mode: MODY.home })}
                   key="menu-logo"
                   title={<Icon type="setting" />}
+                  subMenuCloseDelay={10}
                 >
                   <Menu.ItemGroup
                     key="settings-editor"
@@ -549,17 +560,36 @@ class LelApp extends React.Component {
                         </Tooltip>
                       </span>
                     </Menu.Item>
-                    <Menu.Item>
+                    <Menu.Item
+                      onClick={e => {
+                        e.preventDefault;
+                      }}
+                    >
                       markdown:{" "}
                       <span>
                         <Tooltip title="Markdown only">
                           <Switch
                             style={{ width: "35px" }}
                             // export
-                            checkedChildren={<Icon type="block" />}
+                            checkedChildren={<Icon type="fullscreen" />}
                             //unCheckedChildren="lel"
                             defaultChecked={this.state.markdownOnly}
                             onChange={this.toggleMarkdownOnly}
+                          />
+                        </Tooltip>
+                      </span>
+                    </Menu.Item>
+                    <Menu.Item>
+                      light:{" "}
+                      <span>
+                        <Tooltip title="Switch between light and dark theme">
+                          <Switch
+                            style={{ width: "35px" }}
+                            // export
+                            checkedChildren={<Icon type="bulb" />}
+                            //unCheckedChildren="lel"
+                            defaultChecked={this.state.lighttheme}
+                            onChange={this.toggleTheme}
                           />
                         </Tooltip>
                       </span>
@@ -744,7 +774,7 @@ class LelApp extends React.Component {
           </Row>
         </Header>
         {/* </Sider> */}
-        <Layout>
+        <Layout style={sty}>
           <Sider
             theme="light"
             collapsible
@@ -841,7 +871,7 @@ class LelApp extends React.Component {
               overflow: "initial",
               marginLeft: this.state.showStickNavbar ? "600px" : "10px",
               padding: "20px",
-              // TODO height :)
+              width: "100%",
               minHeight: "calc(100vh - 170px)"
             }}
           >
@@ -880,7 +910,13 @@ class LelApp extends React.Component {
             />
           </Modal>
         </Layout>
-        <Footer style={{ textAlign: "center", display: "block" }}>
+        <Footer
+          style={{
+            textAlign: "center",
+            display: "block",
+            background: sty.background
+          }}
+        >
           <Tooltip title="Copy your image and simple paste it into this space (maybe click first)">
             <div
               style={{
@@ -952,6 +988,7 @@ class LelApp extends React.Component {
       case MODY.chronic:
         return (
           <ChronicPanel
+            style={{ background: "white" }}
             milestones={this.state.chronics}
             milestonesMap={this.state.chronicsMap}
             videos={this.state.videos}
@@ -965,6 +1002,7 @@ class LelApp extends React.Component {
             contentPath={this.state.contentPath}
             onImageLoad={this.HandleImageOnLoad}
             onHelpClick={this.HandleHelpClick}
+            onBack={this.HandleBackClick}
             HandleOpenDocument={this.HandleOpenDocument}
             markdownOnly={this.state.markdownOnly}
             // onClick
@@ -995,6 +1033,12 @@ class LelApp extends React.Component {
 
   HandleHelpClick = event => {
     window.open("https://editor.l3l.lol/docu", "_blank");
+  };
+
+  HandleBackClick = () => {
+    this.setState({
+      mode: MODY.home
+    });
   };
 
   handleSearchClick = path => {
@@ -1081,12 +1125,27 @@ class LelApp extends React.Component {
         />
       );
     }
+    let mode = MODE;
+    if (mode !== "prod") {
+      status = (
+        <span>
+          <Tag>{mode}</Tag>
+          {status}
+        </span>
+      );
+    }
     return status;
   }
 
   toggleMarkdownOnly = e => {
     this.setState({
       markdownOnly: !this.state.markdownOnly
+    });
+  };
+
+  toggleTheme = e => {
+    this.setState({
+      lighttheme: !this.state.lighttheme
     });
   };
 

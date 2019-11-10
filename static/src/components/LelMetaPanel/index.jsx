@@ -57,7 +57,11 @@ class MetaPanel extends Component {
       })
       .flat();
     console.log(data);
-    return <Row>{this.renderTodos(todos)}</Row>;
+    return (
+      <div style={{ background: "white", padding: 10, borderRadius: 3 }}>
+        <Row>{this.renderTodos(todos)}</Row>{" "}
+      </div>
+    );
   }
   renderTodos = todos => {
     //todos = todos.map
