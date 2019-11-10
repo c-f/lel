@@ -162,7 +162,7 @@ class ChronicPanel extends Component {
     );
 
     return (
-      <div>
+      <div style={{ background: "white", padding: 10, borderRadius: 3 }}>
         <Row>
           <h2>Chronic {days}</h2>
         </Row>
@@ -426,7 +426,10 @@ class ChronicPanel extends Component {
     e.preventDefault();
 
     this.setState({
-      url: this.getURL(name)
+      url: this.getURL(name),
+      currTab: TABMODE.captures,
+      showCommands: false,
+      showDetails: false
     });
   };
 
