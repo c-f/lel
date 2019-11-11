@@ -119,6 +119,8 @@ class Graph extends React.Component {
     });
   };
 
+  merge;
+
   saveData = name => {
     let data = {};
 
@@ -152,6 +154,50 @@ class Graph extends React.Component {
   HandleSearch = filter => {
     // todo
     this.setState({ filter: filter }, this.HandleData);
+  };
+
+  // optimization needed
+  // HandleSync can be used, when a previously modified graph (state)
+  // is modified
+  HandleSync = e => {
+    new API().graph().then(data => {
+      // all data
+      let filtered = FilterNodes(data, this.state.filter);
+      let prettyData = HandleLayout(filtered);
+
+      console.log(prettyData["nodes"]);
+
+      let newData = {
+        edges: [],
+        nodes: []
+      };
+
+      // collect old nodes
+      let nodeMap = {};
+      this.state.data["nodes"].forEach(node => {
+        nodeMap[node.id] = node;
+      });
+      // collect old edges
+      let edgeMap = {};
+      this.state.data["edges"].forEach(edge => {
+        edgeMap[edge.id] = edge;
+      });
+
+      // replace data but the x,y coords
+      prettyData["nodes"].forEach(node => {
+        let oldNode = nodeMap[node.id];
+        if (oldNode !== undefined) {
+          node.x = oldNode.x;
+          node.y = oldNode.y;
+        }
+        newData["nodes"].push(node);
+      });
+
+      // edges can be replaced completely
+      newData["edges"] = prettyData["edges"];
+
+      this.setState({ data: newData });
+    });
   };
 
   HandleCompass = e => {
@@ -193,27 +239,38 @@ class Graph extends React.Component {
             <InputGroup>
               <Row>
                 <Col span={1}>
-                  <Button icon="compass" onClick={this.HandleCompass}></Button>
+                  <Tooltip title={"Free mode "}>
+                    <Button
+                      icon="compass"
+                      onClick={this.HandleCompass}
+                    ></Button>
+                  </Tooltip>
                 </Col>
                 <Col span={1}>
-                  <Button
-                    icon="cloud-sync"
-                    onClick={e => message.error("Currently not implemented", 1)}
-                  ></Button>
+                  <Tooltip title={"Update the graph"}>
+                    <Button
+                      icon="cloud-sync"
+                      onClick={e => this.HandleSync()}
+                    ></Button>
+                  </Tooltip>
                 </Col>
                 <Col span={1}>
-                  <Button
-                    icon="plus-circle"
-                    onClick={e => {
-                      this.showModal();
-                    }}
-                  ></Button>
+                  <Tooltip title={"Add new Graph "}>
+                    <Button
+                      icon="plus-circle"
+                      onClick={e => {
+                        this.showModal();
+                      }}
+                    ></Button>
+                  </Tooltip>
                 </Col>
                 <Col span={1}>
-                  <Button
-                    icon="save"
-                    onClick={e => this.saveData(this.state.name)}
-                  ></Button>
+                  <Tooltip title={"Save the Graph "}>
+                    <Button
+                      icon="save"
+                      onClick={e => this.saveData(this.state.name)}
+                    ></Button>
+                  </Tooltip>
                 </Col>
                 <Col span={8}>
                   <Select
