@@ -32,7 +32,7 @@ class RecorderPanel extends Component {
     this.api.uploadVideo(fd);
   };
 
-  getSeekableBlob = (inputBlob, callback) => {
+  getSeekableBlob = (inputBlob, tmp) => {
     // EBML.js copyrights goes to: https://github.com/legokichi/ts-ebml
     if (typeof EBML === "undefined") {
       throw new Error("Please link: https://cdn.webrtc-experiment.com/EBML.js");
@@ -41,8 +41,10 @@ class RecorderPanel extends Component {
     var decoder = new EBML.Decoder();
     var tools = EBML.tools;
     var fileReader = new FileReader();
-    fileReader.onload = function(e) {
-      var ebmlElms = decoder.decode(this.result);
+    fileReader.onload = e => {
+      console.log("[filereader]", "onload");
+
+      var ebmlElms = decoder.decode(fileReader.result);
       ebmlElms.forEach(function(element) {
         reader.read(element);
       });
@@ -52,11 +54,15 @@ class RecorderPanel extends Component {
         reader.duration,
         reader.cues
       );
-      var body = this.result.slice(reader.metadataSize);
+      var body = fileReader.result.slice(reader.metadataSize);
       var newBlob = new Blob([refinedMetadataBuf, body], {
         type: "video/webm"
       });
-      callback(newBlob);
+      console.log("[filereader]", "send");
+      this.HandleUploadVideo(newBlob, tmp, false);
+      fileReader.abort();
+      console.log("[filereader]", "finish");
+      fileReader = null;
     };
     fileReader.readAsArrayBuffer(inputBlob);
   };
@@ -93,6 +99,8 @@ class RecorderPanel extends Component {
         this.blockSite(true);
 
         let track = stream.getVideoTracks()[0];
+        console.log(track.getSettings());
+        console.log(track.getConstraints());
         let settings = track.getSettings();
 
         stream.addEventListener(
@@ -124,14 +132,15 @@ class RecorderPanel extends Component {
           3
         );
         (async () => {
-          let recorder = new RecordRTCPromisesHandler([stream], {
+          let recorder = new RecordRTCPromisesHandler(stream, {
             type: "video",
             video: {
               width: settings.width,
               height: settings.height,
               frameRate: this.state.framerate
             },
-            mimeType: "video/webm;codecs=vp8"
+            mimeType: "video/webm;codecs=vp8",
+            checkForInactiveTracks: true
           });
           this.setState({ recorder: recorder });
 
@@ -153,19 +162,17 @@ class RecorderPanel extends Component {
             await sleep(recordtime);
             await recorder.stopRecording();
 
-            let blob = await recorder.getBlob();
-            tmp = start;
-            this.getSeekableBlob(blob, rawblob => {
-              console.log("[record]", "[send]", rawblob);
-              this.HandleUploadVideo(rawblob, tmp, false);
+            await recorder.getBlob().then(blob => {
+              tmp = start;
+              this.getSeekableBlob(blob, tmp);
             });
 
-            if (!this.state.stream.active) {
+            if (!stream.active) {
               console.log("INTERRUPT BY USER");
               this.setState({ isRecording: false });
             }
 
-            blob = null;
+            console.log("[reset]");
             await recorder.reset();
           }
         })();
