@@ -40,6 +40,7 @@ class LelTagsPanel extends Component {
             <Col span={12}>
               <ul>
                 {this.state.matches.map((match, index) => {
+                  match = match.split("__")[1];
                   return (
                     <li key={index}>
                       <a

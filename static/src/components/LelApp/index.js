@@ -417,9 +417,8 @@ class LelApp extends React.Component {
 
   // Tags
   HandleTagsOnSelect = e => {
-    e = e.split("__")[1];
-    this.setState({ showTagsBar: false });
     this.HandleNavOnSelect(e);
+    this.setState({ showTagsBar: false });
   };
 
   // t handler
@@ -933,7 +932,7 @@ class LelApp extends React.Component {
           <Button
             type="dashed"
             target="_blank"
-            href="https://editor.l3l.lol/docu"
+            href="https://editor.l3l.lol/user/"
             icon="question-circle"
           >
             Help
