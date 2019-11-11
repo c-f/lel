@@ -6,7 +6,7 @@ const { TreeNode } = Tree;
 
 export const loop = (data, searchValue, previous) => {
   return data
-    .map(item => {
+    .map((item, mapIndex) => {
       if (item == null) {
         return null;
       }
@@ -50,7 +50,7 @@ export const loop = (data, searchValue, previous) => {
 
         if (children.length > 0) {
           return (
-            <TreeNode key={item.key} title={title}>
+            <TreeNode key={mapIndex + "__" + item.key} title={title}>
               {children}
             </TreeNode>
           );
@@ -68,7 +68,7 @@ export const loop = (data, searchValue, previous) => {
           );
         }
 
-        return <TreeNode key={item.key} title={title} />;
+        return <TreeNode key={mapIndex + "__" + item.key} title={title} />;
       } else {
         return null;
       }

@@ -1,10 +1,20 @@
 import React, { Component } from "react";
 import TreeView from "./tree.jsx";
-import { Drawer, Alert } from "antd";
+import { Drawer, Alert, Row, Col } from "antd";
 
 class LelTagsPanel extends Component {
+  state = {
+    matches: [],
+    infoEnable: false
+  };
+
   render() {
     // maybe arrow function on onSelect
+    let sty = {};
+    if (this.state.infoEnable) {
+      sty.boxShadow =
+        "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)";
+    }
 
     return (
       <Drawer
@@ -15,9 +25,38 @@ class LelTagsPanel extends Component {
         onClose={this.props.onClose}
         height="bottom"
         visible={this.props.visible}
-        //style={{ paddingLeft: "200px" }}
+        width={this.state.infoEnable ? 800 : 400}
       >
-        <TreeView data={this.props.data} onSelect={this.props.onSelect} />
+        <Row>
+          <Col span={12} style={sty}>
+            <TreeView
+              data={this.props.data}
+              onSelect={e => {
+                this.setState({ matches: e, infoEnable: true });
+              }}
+            />
+          </Col>
+          {this.state.infoEnable && (
+            <Col span={12}>
+              <ul>
+                {this.state.matches.map((match, index) => {
+                  return (
+                    <li key={index}>
+                      <a
+                        href="#"
+                        onClick={e => {
+                          this.props.onSelect(match);
+                        }}
+                      >
+                        {match}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </Col>
+          )}
+        </Row>
       </Drawer>
     );
   }

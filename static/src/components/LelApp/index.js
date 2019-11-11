@@ -417,11 +417,9 @@ class LelApp extends React.Component {
 
   // Tags
   HandleTagsOnSelect = e => {
-    console.log("[Click]", "[tags]", e[0]);
-    console.log("TODO implementation not fully supported");
-    this.setState({
-      mode: MODY.tags
-    });
+    e = e.split("__")[1];
+    this.setState({ showTagsBar: false });
+    this.HandleNavOnSelect(e);
   };
 
   // t handler
