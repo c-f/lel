@@ -1029,7 +1029,7 @@ class LelApp extends React.Component {
   }
 
   HandleHelpClick = event => {
-    window.open("https://editor.l3l.lol/docu", "_blank");
+    window.open("https://editor.l3l.lol/user", "_blank");
   };
 
   HandleBackClick = () => {
