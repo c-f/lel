@@ -79,7 +79,7 @@ module.exports = {
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(pkg.version),
       HOMEPAGE: JSON.stringify(pkg.homepage),
-      MODE: "prod"
+      MODE: JSON.stringify("prod")
     })
   ]
 };
