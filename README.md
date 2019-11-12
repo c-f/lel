@@ -5,7 +5,7 @@ TLDR; Explode your notes.
 A PoC for a better keepnote
 ```
 
-![LEL - no need for more](./docs/LEL.png)
+![LEL - no need for more](./docs/LEL-short.png)
 
 LEL is a visualization layer and helper for relevant documentation and note taking focused on IT operations.
 

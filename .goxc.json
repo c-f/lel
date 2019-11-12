@@ -16,5 +16,11 @@
     "xc": {
       "GOARM": "7"
     }
-  }
+  },
+  "BuildSettings": {
+    "LdFlags": "-s -w"
+  },
+  "Env":[
+	  "CGO_ENABLED=0"
+  ]
 }
