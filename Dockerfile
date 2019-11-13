@@ -1,10 +1,11 @@
 # --[Dockerfile for building LEL by your own]--
 
-FROM node AS build-frontend
+FROM node:12.10.0-stretch-slim AS build-frontend
 COPY ./static/*js /app/
 COPY ./static/.babelrc /app/
 COPY ./static/src /app/src/
 COPY ./static/package.json /app/
+COPY ./static/package-lock.json /app/
 WORKDIR /app
 RUN mkdir dist \
     && npm install \
