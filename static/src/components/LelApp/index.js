@@ -376,17 +376,25 @@ class LelApp extends React.Component {
       .catch(error => this.setState({ isLoading: false }));
   }
 
-  // Navigation
-  HandleNavOnSelect = e => {
-    let contentPath = e;
-    if (typeof e === "object") {
-      contentPath = e[0];
+  HandleNavOnEdit = (key, title) => {
+    console.log("lel");
+    if (this.state.external) {
+      this.HandleOpenDocument(null, key);
     }
+    this.HandleNavOnSelect(key, title);
+  };
+
+  // Navigation
+  HandleNavOnSelect = (key, title) => {
+    let contentPath = key;
+
+    console.log("[nav] [select] ", key, title);
 
     if (!contentPath.endsWith(".md")) {
       message.error("Cannot open folder", 2.5);
       return;
     }
+
     this.setState(
       {
         contentPath: contentPath,
@@ -397,7 +405,6 @@ class LelApp extends React.Component {
         this.getMetaData();
       }
     );
-
     this.handleNavBar(false);
   };
 
@@ -416,8 +423,8 @@ class LelApp extends React.Component {
   };
 
   // Tags
-  HandleTagsOnSelect = e => {
-    this.HandleNavOnSelect(e);
+  HandleTagsOnSelect = (key, title) => {
+    this.HandleNavOnSelect(key, title);
     this.setState({ showTagsBar: false });
   };
 
@@ -792,7 +799,7 @@ class LelApp extends React.Component {
             <LelStickyNavPanel
               data={this.state.nav}
               onSelect={this.HandleNavOnSelect}
-
+              onClickSpecial={this.HandleNavOnEdit}
               //visible={this.state.showNavBar}
               //onClose={() => this.handleNavBar(false)}
             />
@@ -854,6 +861,7 @@ class LelApp extends React.Component {
           <LelNavPanel
             data={this.state.nav}
             onSelect={this.HandleNavOnSelect}
+            onClickSpecial={this.HandleNavOnEdit}
             visible={this.state.showNavBar}
             onClose={() => this.handleNavBar(false)}
           />

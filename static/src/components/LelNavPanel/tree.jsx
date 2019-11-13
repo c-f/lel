@@ -35,6 +35,9 @@ class TreeView extends Component {
     const { searchValue, expandedKeys, autoExpandParent } = this.state;
     const { onSelect, data } = this.props;
 
+    const select =
+      this.props.onSelect === undefined ? e => {} : this.props.onSelect;
+
     return (
       <div>
         <Search
@@ -51,7 +54,7 @@ class TreeView extends Component {
         {this.isReady() && (
           <div>
             <Tree
-              onSelect={onSelect}
+              //onSelect={onSelect}
               defaultExpandAll={true}
               autoExpandParent={true}
               onRightClick={e => {
@@ -67,7 +70,7 @@ class TreeView extends Component {
                 zIndex: -100
               }}
             >
-              {loop(data, searchValue)}
+              {loop(data, searchValue, select, this.props.onClickSpecial)}
             </Tree>
           </div>
         )}

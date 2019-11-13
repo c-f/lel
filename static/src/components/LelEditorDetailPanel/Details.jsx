@@ -70,7 +70,7 @@ class Details extends React.Component {
 
   renderNodeDetail = () => {
     const { form } = this.props;
-    const { id, references, tags } = this.item.getModel();
+    const { id, references, tags, label } = this.item.getModel();
 
     // todo open should not be a link :)
     console.log(this.item);
@@ -92,7 +92,7 @@ class Details extends React.Component {
               target="_blank"
               onClick={e => {
                 console.log("SSS", id);
-                this.props.onShow(id);
+                this.props.onShow(id, label);
               }}
             >
               Show Document
@@ -101,13 +101,14 @@ class Details extends React.Component {
         </ul>
         References:
         <ul>
-          {references.map((value, index) => {
-            return (
-              <li key={index}>
-                <a onClick={e => this.props.onOpen(e, value)}>{value}</a>
-              </li>
-            );
-          })}
+          {references !== undefined &&
+            references.map((value, index) => {
+              return (
+                <li key={index}>
+                  <a onClick={e => this.props.onOpen(e, value)}>{value}</a>
+                </li>
+              );
+            })}
         </ul>
         Tags:
         <ul>

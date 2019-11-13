@@ -80,7 +80,11 @@ class LelNavPanel extends Component {
           type="info"
           showIcon
         />
-        <TreeView data={this.props.data} onSelect={this.props.onSelect} />
+        <TreeView
+          data={this.props.data}
+          onSelect={this.props.onSelect}
+          onClickSpecial={this.props.onClickSpecial}
+        />
       </Drawer>
     );
   }
@@ -88,7 +92,13 @@ class LelNavPanel extends Component {
 
 class LelStickyNavPanel extends Component {
   render() {
-    return <TreeView data={this.props.data} onSelect={this.props.onSelect} />;
+    return (
+      <TreeView
+        data={this.props.data}
+        onSelect={this.props.onSelect}
+        onClickSpecial={this.props.onClickSpecial}
+      />
+    );
   }
 }
 

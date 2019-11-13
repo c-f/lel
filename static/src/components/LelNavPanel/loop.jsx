@@ -1,10 +1,16 @@
 import React from "react";
-import { Tree, Tag } from "antd";
+import { Tree, Tag, Icon } from "antd";
 const { TreeNode } = Tree;
 
 // todo maybe with slashes test/yees
 
-export const loop = (data, searchValue, previous) => {
+export const loop = (
+  data,
+  searchValue,
+  selectHandler = () => {},
+  clickHandler = null,
+  previous = null
+) => {
   return data
     .map((item, mapIndex) => {
       if (item == null) {
@@ -17,13 +23,25 @@ export const loop = (data, searchValue, previous) => {
       const afterStr = item.title.substr(index + searchValue.length);
       let title =
         index > -1 ? (
-          <span>
+          <span
+            onClick={e => {
+              e.preventDefault();
+              selectHandler(item.key, item.title);
+            }}
+          >
             {beforeStr}
             <span style={{ color: "#f50" }}>{searchValue}</span>
             {afterStr}
           </span>
         ) : (
-          <span>{item.title}</span>
+          <span
+            onClick={e => {
+              e.preventDefault();
+              selectHandler(item.key, item.title);
+            }}
+          >
+            {item.title}
+          </span>
         );
 
       if (searchValue.startsWith("tags:")) {
@@ -42,11 +60,15 @@ export const loop = (data, searchValue, previous) => {
       const prevFound = previous || index > -1 || tagFound;
 
       if (item.children) {
-        const children = loop(item.children, searchValue, prevFound).filter(
-          item => {
-            return item != null;
-          }
-        );
+        const children = loop(
+          item.children,
+          searchValue,
+          selectHandler,
+          clickHandler,
+          prevFound
+        ).filter(item => {
+          return item != null;
+        });
 
         if (children.length > 0) {
           return (
@@ -57,16 +79,31 @@ export const loop = (data, searchValue, previous) => {
         }
       }
       if (index > -1 || searchValue == "" || prevFound || tagFound) {
+        let names = "";
+        let attrs = "";
         if (item.other !== undefined && item.other.meta !== undefined) {
-          const names = item.other.meta.names.map(i => {
+          names = item.other.meta.names.map(i => {
             return <Tag key={`${item.key}-${i}`}>{i} </Tag>;
           });
-          title = (
-            <span>
-              {title} {names}
-            </span>
+        }
+
+        if (clickHandler != null) {
+          attrs = (
+            <Icon
+              type="edit"
+              onClick={e => {
+                e.preventDefault();
+                clickHandler(item.key, title);
+              }}
+            ></Icon>
           );
         }
+
+        title = (
+          <span>
+            {title} {names} {attrs}
+          </span>
+        );
 
         return <TreeNode key={mapIndex + "__" + item.key} title={title} />;
       } else {
