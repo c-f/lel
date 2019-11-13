@@ -137,7 +137,7 @@ func makeRootCert(key crypto.Signer, filename string) (*x509.Certificate, error)
 	}
 	template := &x509.Certificate{
 		Subject: pkix.Name{
-			CommonName: "LeL::minica root ca " + hex.EncodeToString(serial.Bytes()[:3]),
+			CommonName: "minica root ca " + hex.EncodeToString(serial.Bytes()[:3]),
 		},
 		SerialNumber: serial,
 		NotBefore:    time.Now(),

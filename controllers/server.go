@@ -125,8 +125,12 @@ func (s *Server) Start() error {
 		}
 		host := fmt.Sprintf("%s,%s,%s","127.0.0.1","srv.l3l.lol",s.c.Hostname)
 		leldir := utils.GetLelDir()
-
-		utils.GenerateCert(host ,leldir, keyFile, crtFile)
+		if ! utils.FileExist(keyFile) || ! utils.FileExist(crtFile){
+			if err = utils.GenerateCert(host ,leldir, keyFile, crtFile); err != nil{
+				return err 
+			}
+		}
+		
 
 
 		log.Printf("[*] Using HTTPS")
