@@ -292,6 +292,9 @@ func GenerateCert(host ,homePath, crtKey, crtPem string) error {
 
 	hosts := split(host)
 	for _, h := range hosts {
+		if parts := strings.Split(h,":"); len(parts) == 2 {
+			h = parts[0]
+		}
 		if ip := net.ParseIP(h); ip != nil {
 			ipSlice = append(ipSlice, h)
 		} else {

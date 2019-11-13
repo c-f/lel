@@ -32,7 +32,7 @@ ARG USER_ID=1000
 
 WORKDIR /app
 
-RUN adduser -H -D -u "${USER_ID}" lel \
+RUN adduser -D -u "${USER_ID}" lel \
     && mkdir -p /app/static/dist \
     && mkdir -p /project
 

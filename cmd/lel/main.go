@@ -118,6 +118,8 @@ func main() {
 
 				Mode: *mode,
 				Auth: map[string]string{},
+
+				Hostname: os.Getenv("LEL_HOSTNAME"),
 			},
 			Project: projectConf,
 		}
