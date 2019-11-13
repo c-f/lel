@@ -70,5 +70,11 @@ func (s *ServerConfig) Prepare() (err error) {
 	if s.Hostname == "" {
 		s.Hostname = s.ListenURL
 	}
+
+	leldir  := utils.GetLelDir()
+	if err = os.MkdirAll(leldir, 0755); err != nil{
+		return 
+	}
+
 	return
 }

@@ -10,8 +10,6 @@ import (
 	"github.com/c-f/lel/config"
 	"github.com/c-f/lel/utils"
 	"github.com/gorilla/mux"
-
-	"github.com/kabukky/httpscerts"
 )
 
 // Server is the webserver in order to display all entries
@@ -125,16 +123,11 @@ func (s *Server) Start() error {
 		if err != nil {
 			return err
 		}
+		host := fmt.Sprintf("%s,%s,%s","127.0.0.1","srv.l3l.lol",s.c.Hostname)
+		leldir := utils.GetLelDir()
 
-		if err := httpscerts.Check(crtFile, keyFile); err != nil {
-			log.Printf("[*] Generate CA and HTTPS certs\n")
-			serverlist := fmt.Sprintf("127.0.0.1:8888,srv.l3l.lol:8888,srv.l3l.lol:4443,%s", s.c.Hostname)
+		utils.GenerateCert(host ,leldir, keyFile, crtFile)
 
-			err = httpscerts.Generate(crtFile, keyFile, serverlist)
-			if err != nil {
-				log.Fatal("Error: Couldn't create https certs.")
-			}
-		}
 
 		log.Printf("[*] Using HTTPS")
 		log.Printf("Starting admin server at https://%s", s.c.ListenURL)

@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	homedir "github.com/mitchellh/go-homedir"
 )
 
 var (
@@ -178,6 +180,14 @@ func FileExist(p string) bool {
 		return false
 	}
 	return true
+}
+
+func GetLelDir()(lelDir string){
+	if lelDir = os.Getenv("LEL_CONFIG_DIR");lelDir == "" {
+		homeDir, _ := homedir.Dir()
+		lelDir = filepath.Join(homeDir,".LeL")
+	}
+	return 
 }
 
 // DirIsEmpty checks if the directory contains any files
