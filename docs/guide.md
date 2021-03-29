@@ -80,7 +80,7 @@ Simple commandline logger with two modi:
 It loggs every command in a json structure.
 
 ```
-{"time":"1572268522","termuuid":"9db7485d-a58a-4c29-b6d2-3e1b92832f82","pid":"31657","user":"sil","pwd":"/home/sil/lel-demo","command":"milestone_log"}
+{"time":"1572268522","termuuid":"9db7485d-a58a-4c29-b6d2-3e1b92832f82","pid":"31657","user":"silly-user","pwd":"/home/silly-user/lel-demo","command":"milestone_log"}
 ```
 
 ## Editor
